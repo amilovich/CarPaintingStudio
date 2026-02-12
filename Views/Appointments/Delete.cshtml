@@ -1,0 +1,118 @@
+@model CarPaintingStudio.Models.Appointment
+
+@{
+    ViewData["Title"] = "Изтриване на записване";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Изтриване на записване</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <strong>Внимание!</strong> Сигурни ли сте, че искате да изтриете това записване?
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            <i class="fas fa-user"></i> @Html.DisplayNameFor(model => model.CustomerName)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.CustomerName)
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-phone"></i> @Html.DisplayNameFor(model => model.Phone)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Phone)
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-envelope"></i> @Html.DisplayNameFor(model => model.Email)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Email)
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-car"></i> @Html.DisplayNameFor(model => model.CarBrand)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Model.CarBrand @Model.CarModel
+                            @if (Model.CarYear.HasValue)
+                            {
+                                <span class="text-muted">(@Model.CarYear)</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-calendar"></i> @Html.DisplayNameFor(model => model.AppointmentDate)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Model.AppointmentDate.ToString("dd.MM.yyyy")
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-tools"></i> @Html.DisplayNameFor(model => model.Service)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Model.Service?.Name
+                            <span class="text-muted">(@Model.Service?.Price лв)</span>
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-info-circle"></i> @Html.DisplayNameFor(model => model.Status)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @switch (Model.Status)
+                            {
+                                case CarPaintingStudio.Models.AppointmentStatus.Pending:
+                                    <span class="badge bg-warning">Чакащ</span>
+                                    break;
+                                case CarPaintingStudio.Models.AppointmentStatus.Confirmed:
+                                    <span class="badge bg-info">Потвърден</span>
+                                    break;
+                                case CarPaintingStudio.Models.AppointmentStatus.InProgress:
+                                    <span class="badge bg-primary">В процес</span>
+                                    break;
+                                case CarPaintingStudio.Models.AppointmentStatus.Completed:
+                                    <span class="badge bg-success">Завършен</span>
+                                    break;
+                                case CarPaintingStudio.Models.AppointmentStatus.Cancelled:
+                                    <span class="badge bg-danger">Отказан</span>
+                                    break;
+                            }
+                        </dd>
+
+                        @if (!string.IsNullOrEmpty(Model.Notes))
+                        {
+                            <dt class="col-sm-4">
+                                <i class="fas fa-sticky-note"></i> @Html.DisplayNameFor(model => model.Notes)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.Notes)
+                            </dd>
+                        }
+                    </dl>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Назад към списъка
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Изтрий
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

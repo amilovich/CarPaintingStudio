@@ -1,0 +1,116 @@
+@model CreateAppointmentViewModel
+@{
+    ViewData["Title"] = "Запиши час";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2>
+                        <i class="fas fa-calendar-plus"></i> Запиши час за боядисване
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Попълнете формата по-долу и нашият екип ще се свърже с Вас за потвърждение.</p>
+
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <h5 class="mb-3"><i class="fas fa-user"></i> Лични данни</h5>
+                        
+                        <div class="mb-3">
+                            <label asp-for="CustomerName" class="form-label"></label>
+                            <input asp-for="CustomerName" class="form-control" placeholder="Иван Иванов" />
+                            <span asp-validation-for="CustomerName" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Phone" class="form-label"></label>
+                                <input asp-for="Phone" class="form-control" placeholder="0888123456" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" placeholder="ivan@example.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4"><i class="fas fa-car"></i> Данни за автомобила</h5>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="CarBrand" class="form-label"></label>
+                                <input asp-for="CarBrand" class="form-control" placeholder="BMW" />
+                                <span asp-validation-for="CarBrand" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="CarModel" class="form-label"></label>
+                                <input asp-for="CarModel" class="form-control" placeholder="320d" />
+                                <span asp-validation-for="CarModel" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="CarYear" class="form-label"></label>
+                                <input asp-for="CarYear" class="form-control" placeholder="2020" />
+                                <span asp-validation-for="CarYear" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4"><i class="fas fa-tools"></i> Услуга и дата</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="ServiceId" class="form-label"></label>
+                            <select asp-for="ServiceId" class="form-select">
+                                <option value="">-- Изберете услуга --</option>
+                                @if (Model.AvailableServices != null)
+                                {
+                                    @foreach (var service in Model.AvailableServices)
+                                    {
+                                        <option value="@service.Id">
+                                            @service.Name - @service.Price лв (@service.DurationDays дни)
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="ServiceId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="AppointmentDate" class="form-label"></label>
+                            <input asp-for="AppointmentDate" class="form-control" type="date" />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> Моля изберете дата поне един ден напред
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Допълнителни забележки или специални изисквания..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check"></i> Изпрати записване
+                            </button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Отказ
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

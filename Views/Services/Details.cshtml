@@ -1,0 +1,104 @@
+@model Service
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Service Header Card -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-primary text-white py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-paint-roller"></i> @Model.Name
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Description -->
+                    <div class="mb-4 pb-3 border-bottom">
+                        <h5 class="text-muted mb-3">
+                            <i class="fas fa-align-left"></i> Описание
+                        </h5>
+                        <p class="lead text-dark">@Model.Description</p>
+                    </div>
+
+                    <!-- Price and Duration Row -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="info-box p-4 bg-light rounded border">
+                                <h6 class="text-muted mb-3 text-uppercase">
+                                    <i class="fas fa-tag"></i> Цена
+                                </h6>
+                                <h2 class="text-success mb-0 fw-bold">@Model.Price лв</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="info-box p-4 bg-light rounded border">
+                                <h6 class="text-muted mb-3 text-uppercase">
+                                    <i class="fas fa-clock"></i> Продължителност
+                                </h6>
+                                <h2 class="text-primary mb-0 fw-bold">@Model.DurationDays дни</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status and Date Row -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-2">
+                                <i class="fas fa-info-circle"></i> Статус
+                            </h6>
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success px-3 py-2" style="font-size: 1rem;">
+                                    <i class="fas fa-check-circle"></i> Активна
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary px-3 py-2" style="font-size: 1rem;">
+                                    <i class="fas fa-times-circle"></i> Неактивна
+                                </span>
+                            }
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-2">
+                                <i class="fas fa-calendar"></i> Добавена на
+                            </h6>
+                            <p class="mb-0 text-dark">@Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons Card -->
+            <div class="card shadow mb-5">
+                <div class="card-body p-4">
+                    <!-- Main Call-to-Action Button -->
+                    <div class="d-grid mb-4">
+                        <a asp-controller="Appointments" asp-action="Create" 
+                           class="btn btn-primary btn-lg" style="padding: 1rem;">
+                            <i class="fas fa-calendar-plus"></i> Запиши час за тази услуга
+                        </a>
+                    </div>
+                    
+                    <!-- Management Buttons -->
+                    <div class="d-flex flex-column flex-md-row gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" 
+                           class="btn btn-warning flex-fill">
+                            <i class="fas fa-edit"></i> Редактирай
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" 
+                           class="btn btn-danger flex-fill">
+                            <i class="fas fa-trash"></i> Изтрий
+                        </a>
+                        <a asp-action="Index" 
+                           class="btn btn-secondary flex-fill">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

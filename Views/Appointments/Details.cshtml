@@ -1,0 +1,133 @@
+@model Appointment
+@{
+    ViewData["Title"] = "Детайли - Записване";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2>
+                        <i class="fas fa-info-circle"></i> Детайли за записването
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-user"></i> Информация за клиента</h5>
+                            <dl class="row">
+                                <dt class="col-sm-4">Име:</dt>
+                                <dd class="col-sm-8">@Model.CustomerName</dd>
+
+                                <dt class="col-sm-4">Телефон:</dt>
+                                <dd class="col-sm-8">
+                                    <a href="tel:@Model.Phone">@Model.Phone</a>
+                                </dd>
+
+                                <dt class="col-sm-4">Имейл:</dt>
+                                <dd class="col-sm-8">
+                                    <a href="mailto:@Model.Email">@Model.Email</a>
+                                </dd>
+                            </dl>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-car"></i> Информация за автомобила</h5>
+                            <dl class="row">
+                                <dt class="col-sm-4">Марка:</dt>
+                                <dd class="col-sm-8">@Model.CarBrand</dd>
+
+                                <dt class="col-sm-4">Модел:</dt>
+                                <dd class="col-sm-8">@Model.CarModel</dd>
+
+                                @if (Model.CarYear.HasValue)
+                                {
+                                    <dt class="col-sm-4">Година:</dt>
+                                    <dd class="col-sm-8">@Model.CarYear</dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-tools"></i> Детайли за услугата</h5>
+                            <dl class="row">
+                                <dt class="col-sm-4">Услуга:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.Service != null)
+                                    {
+                                        <strong>@Model.Service.Name</strong><br />
+                                        <small class="text-muted">@Model.Service.Description</small><br />
+                                        <span class="badge bg-success">@Model.Service.Price лв</span>
+                                        <span class="badge bg-info">@Model.Service.DurationDays дни</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Дата:</dt>
+                                <dd class="col-sm-8">
+                                    <strong>@Model.AppointmentDate.ToString("dd.MM.yyyy")</strong>
+                                </dd>
+                            </dl>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-info-circle"></i> Статус и други</h5>
+                            <dl class="row">
+                                <dt class="col-sm-4">Статус:</dt>
+                                <dd class="col-sm-8">
+                                    @switch (Model.Status)
+                                    {
+                                        case AppointmentStatus.Pending:
+                                            <span class="badge bg-warning text-dark fs-6">Чакащ</span>
+                                            break;
+                                        case AppointmentStatus.Confirmed:
+                                            <span class="badge bg-info fs-6">Потвърден</span>
+                                            break;
+                                        case AppointmentStatus.InProgress:
+                                            <span class="badge bg-primary fs-6">В процес</span>
+                                            break;
+                                        case AppointmentStatus.Completed:
+                                            <span class="badge bg-success fs-6">Завършен</span>
+                                            break;
+                                        case AppointmentStatus.Cancelled:
+                                            <span class="badge bg-danger fs-6">Отказан</span>
+                                            break;
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Създаден:</dt>
+                                <dd class="col-sm-8">@Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <hr />
+                        <h5><i class="fas fa-sticky-note"></i> Забележки</h5>
+                        <div class="alert alert-info">
+                            @Model.Notes
+                        </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex flex-column flex-md-row gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning flex-fill">
+                            <i class="fas fa-edit"></i> Редактирай
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger flex-fill">
+                            <i class="fas fa-trash"></i> Изтрий
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary flex-fill">
+                            <i class="fas fa-arrow-left"></i> Назад към списъка
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

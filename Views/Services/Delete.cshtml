@@ -1,0 +1,81 @@
+@model CarPaintingStudio.Models.Service
+
+@{
+    ViewData["Title"] = "Изтриване на услуга";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Изтриване на услуга</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <strong>Внимание!</strong> Сигурни ли сте, че искате да изтриете тази услуга?
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">
+                            <i class="fas fa-tag"></i> @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+
+                        <dt class="col-sm-3">
+                            <i class="fas fa-align-left"></i> @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+
+                        <dt class="col-sm-3">
+                            <i class="fas fa-money-bill-wave"></i> @Html.DisplayNameFor(model => model.Price)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Price) лв
+                        </dd>
+
+                        <dt class="col-sm-3">
+                            <i class="fas fa-clock"></i> @Html.DisplayNameFor(model => model.DurationDays)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.DurationDays) дни
+                        </dd>
+
+                        <dt class="col-sm-3">
+                            <i class="fas fa-check-circle"></i> @Html.DisplayNameFor(model => model.IsActive)
+                        </dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-@(Model.IsActive ? "success" : "secondary")">
+                                @(Model.IsActive ? "Активна" : "Неактивна")
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-3">
+                            <i class="fas fa-calendar"></i> @Html.DisplayNameFor(model => model.CreatedDate)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                        </dd>
+                    </dl>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Назад към списъка
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Изтрий
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

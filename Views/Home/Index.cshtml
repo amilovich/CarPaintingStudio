@@ -1,0 +1,169 @@
+@{
+    ViewData["Title"] = "Начало";
+}
+
+<!-- Hero Section -->
+<div class="jumbotron text-white text-center py-5 mb-4 rounded">
+    <h1 class="display-4">
+        <i class="fas fa-car"></i> Добре дошли в CarPainting Studio
+    </h1>
+    <p class="lead">Вашият партньор за професионално боядисване на автомобили</p>
+    <hr class="my-4">
+    <p>Повече от 15 години опит в автомобилното боядисване</p>
+    <a class="btn btn-light btn-lg" asp-controller="Appointments" asp-action="Create" role="button">
+        <i class="fas fa-calendar-plus"></i> Запиши час сега
+    </a>
+</div>
+
+<!-- Services Section -->
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <h2 class="text-center">
+            <i class="fas fa-tools"></i> Нашите услуги
+        </h2>
+    </div>
+    
+    @if (ViewBag.Services != null)
+    {
+        @foreach (var service in ViewBag.Services)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">
+                            <i class="fas fa-paint-roller"></i> @service.Name
+                        </h5>
+                        <p class="card-text text-muted mb-4">@service.Description</p>
+                        
+                        <div class="service-info mb-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="price-badge">
+                                        <i class="fas fa-tag"></i> <strong>@service.Price лв</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <div class="duration-text">
+                                        <i class="fas fa-clock"></i> @service.DurationDays дни
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a asp-controller="Services" asp-action="Details" asp-route-id="@service.Id" 
+                           class="btn btn-primary w-100">
+                            <i class="fas fa-info-circle"></i> Детайли
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="text-center mb-5">
+    <a class="btn btn-outline-primary btn-lg" asp-controller="Services" asp-action="Index">
+        <i class="fas fa-list"></i> Вижте всички услуги
+    </a>
+</div>
+
+<!-- Gallery Preview Section -->
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <h2 class="text-center">
+            <i class="fas fa-images"></i> Нашите проекти
+        </h2>
+    </div>
+    
+    @if (ViewBag.GalleryItems != null && ViewBag.GalleryItems.Count > 0)
+    {
+        @foreach (var item in ViewBag.GalleryItems)
+        {
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold mb-2">@item.Title</h6>
+                        <p class="card-text small mb-2">
+                            <i class="fas fa-car text-primary"></i> <strong>@item.CarBrand @item.CarModel</strong>
+                        </p>
+                        <p class="card-text small text-muted">
+                            @item.Description.Substring(0, Math.Min(60, item.Description.Length))...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="text-center mb-5">
+    <a class="btn btn-outline-primary btn-lg" asp-controller="Gallery" asp-action="Index">
+        <i class="fas fa-images"></i> Вижте цялата галерия
+    </a>
+</div>
+
+<!-- Why Choose Us Section -->
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <h2 class="text-center">
+            <i class="fas fa-award"></i> Защо да ни изберете?
+        </h2>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-0 text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-medal fa-3x text-primary mb-3"></i>
+                <h5 class="fw-bold">15+ години опит</h5>
+                <p class="text-muted">Дългогодишен опит в автомобилното боядисване</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-0 text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-paint-brush fa-3x text-primary mb-3"></i>
+                <h5 class="fw-bold">Качествени материали</h5>
+                <p class="text-muted">Използваме само най-добрите бои и материали</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-0 text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-user-check fa-3x text-primary mb-3"></i>
+                <h5 class="fw-bold">Професионален екип</h5>
+                <p class="text-muted">Опитни майстори с внимание към детайлите</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-0 text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                <h5 class="fw-bold">Гаранция</h5>
+                <p class="text-muted">Гарантираме качеството на извършената работа</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card bg-dark text-white shadow-lg">
+            <div class="card-body text-center py-5">
+                <h3 class="mb-3">
+                    <i class="fas fa-phone"></i> Свържете се с нас днес!
+                </h3>
+                <p class="lead mb-4">Телефон: 0888 123 456 | Имейл: info@carpaint.bg</p>
+                <a class="btn btn-light btn-lg" asp-controller="Appointments" asp-action="Create">
+                    <i class="fas fa-calendar-check"></i> Запази час
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
