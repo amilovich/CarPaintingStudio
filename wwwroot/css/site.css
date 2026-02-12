@@ -688,7 +688,7 @@ body {
   }
 }
 
-/* Animation */
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -702,4 +702,9 @@ body {
 
 .fade-in {
   animation: fadeIn 0.5s ease-in;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
 }
