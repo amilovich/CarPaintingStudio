@@ -18,6 +18,46 @@
         </div>
     </div>
 
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-filter"></i> Филтриране и сортиране
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="statusFilter" class="form-label">Статус</label>
+                            <select id="statusFilter" class="form-select">
+                                <option value="all">Всички</option>
+                                <option value="active">Активни</option>
+                                <option value="inactive">Неактивни</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="sortBy" class="form-label">Подреди по</label>
+                            <select id="sortBy" class="form-select">
+                                <option value="name">Име (А-Я)</option>
+                                <option value="price-asc">Цена (възходящ)</option>
+                                <option value="price-desc">Цена (низходящ)</option>
+                                <option value="duration-asc">Продължителност (възходящ)</option>
+                                <option value="duration-desc">Продължителност (низходящ)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="searchInput" class="form-label">Търсене</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="searchInput" class="form-control" placeholder="Търси услуга...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @if (!Model.Any())
     {
         <div class="alert alert-info">

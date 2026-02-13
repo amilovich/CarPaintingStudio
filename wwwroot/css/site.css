@@ -708,3 +708,28 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
 }
+
+/* Service Filter Styling */
+.input-group-text {
+  background-color: #667eea;
+  color: white;
+  border: 1px solid #667eea;
+  border-right: none;
+}
+
+.input-group .form-control {
+  border-left: none;
+}
+
+.input-group .form-control:focus {
+  border-color: #667eea;
+  box-shadow: none;
+}
+
+.input-group-text + .form-control {
+  border-left: 1px solid #ced4da;
+}
+
+.filter-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
