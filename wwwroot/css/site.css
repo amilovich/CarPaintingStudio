@@ -770,3 +770,33 @@ body {
   transform: translateY(-8px);
   box-shadow: 0 12px 24px rgba(0,0,0,0.2) !important;
 }
+
+/* Gallery Styling */
+.gallery-img {
+  height: 250px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-img:hover {
+  transform: scale(1.05);
+}
+
+.gallery-item {
+  transition: all 0.3s ease;
+}
+
+.card-img-top.gallery-img {
+  border-radius: 10px 10px 0 0;
+}
+
+.modal-body img {
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+.modal-body img:hover {
+  transform: scale(1.02);
+}
