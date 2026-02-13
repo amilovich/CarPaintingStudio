@@ -18,6 +18,58 @@
         </div>
     </div>
 
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-warning shadow-sm">
+                <div class="card-body text-center">
+                    <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                    <h3 class="mb-0">@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.Pending)</h3>
+                    <p class="text-muted mb-0">Чакащи</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info shadow-sm">
+                <div class="card-body text-center">
+                    <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fas fa-check fa-2x"></i>
+                    </div>
+                    <h3 class="mb-0">@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.Confirmed)</h3>
+                    <p class="text-muted mb-0">Потвърдени</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-primary shadow-sm">
+                <div class="card-body text-center">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fas fa-spinner fa-2x"></i>
+                    </div>
+                    <h3 class="mb-0">@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.InProgress)</h3>
+                    <p class="text-muted mb-0">В процес</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success shadow-sm">
+                <div class="card-body text-center">
+                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                    <h3 class="mb-0">@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.Completed)</h3>
+                    <p class="text-muted mb-0">Завършени</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Filter buttons -->
     <div class="row mb-4">
         <div class="col-md-12">
@@ -156,18 +208,7 @@
             </table>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="alert alert-secondary">
-                    <strong><i class="fas fa-info-circle"></i> Статистика:</strong>
-                    Общо записвания: <strong>@Model.Count()</strong> |
-                    Чакащи: <strong>@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.Pending)</strong> |
-                    Потвърдени: <strong>@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.Confirmed)</strong> |
-                    В процес: <strong>@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.InProgress)</strong> |
-                    Завършени: <strong>@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.Completed)</strong>
-                </div>
-            </div>
-        </div>
+
     }
 </div>
 
