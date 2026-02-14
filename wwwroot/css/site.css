@@ -800,3 +800,31 @@ body {
 .modal-body img:hover {
   transform: scale(1.02);
 }
+
+/* Testimonials Styling */
+.card.border-0 {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.text-warning .fa-star {
+  font-size: 0.875rem;
+}
+
+/* Testimonial Card Hover */
+.card.border-0:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15) !important;
+}
+
+/* Margin utilities for testimonials */
+.me-2 {
+  margin-right: 0.5rem !important;
+}
+
+.me-3 {
+  margin-right: 1rem !important;
+}
+
+.ms-2 {
+  margin-left: 0.5rem !important;
+}
