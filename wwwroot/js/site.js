@@ -158,3 +158,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+// Newsletter form submission
+document.addEventListener('DOMContentLoaded', function () {
+    const newsletterForm = document.getElementById('newsletterForm');
+    
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            const emailInput = this.querySelector('input[type="email"]');
+            const email = emailInput.value;
+            
+            // Simulate newsletter subscription
+            if (email) {
+                // Show success message
+                const originalHTML = this.innerHTML;
+                this.innerHTML = '<div class="alert alert-success mb-0"><i class="fas fa-check-circle"></i> Благодарим за абонамента!</div>';
+                
+                // Reset form after 3 seconds
+                setTimeout(function () {
+                    newsletterForm.innerHTML = originalHTML;
+                    // Re-attach event listener
+                    const newForm = document.getElementById('newsletterForm');
+                    if (newForm) {
+                        newForm.addEventListener('submit', arguments.callee);
+                    }
+                }, 3000);
+            }
+        });
+    }
+});
