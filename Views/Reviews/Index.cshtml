@@ -14,9 +14,20 @@
             <p class="text-muted lead">Вижте какво казват нашите клиенти за работата ни.</p>
         </div>
         <div class="col-md-4 text-md-end">
-            <a asp-action="Create" class="btn btn-primary btn-lg">
-                <i class="fas fa-pen me-2"></i>Напиши отзив
-            </a>
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <a asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="fas fa-pen me-2"></i>Напиши отзив
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login"
+                   asp-route-returnUrl="/Reviews/Create"
+                   class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Влез за да напишеш отзив
+                </a>
+            }
         </div>
     </div>
 
@@ -71,9 +82,12 @@
         <div class="text-center py-5">
             <i class="fas fa-comment-slash fa-4x text-muted mb-3 d-block"></i>
             <h5 class="text-muted">Все още няма одобрени отзиви.</h5>
-            <a asp-action="Create" class="btn btn-primary mt-3">
-                <i class="fas fa-pen me-2"></i>Бъди първият!
-            </a>
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <a asp-action="Create" class="btn btn-primary mt-3">
+                    <i class="fas fa-pen me-2"></i>Бъди първият!
+                </a>
+            }
         </div>
     }
     else
@@ -84,7 +98,6 @@
                 <div class="col-md-6">
                     <div class="card h-100 shadow-sm border-0">
                         <div class="card-body p-4">
-                            @* Звезди *@
                             <div class="mb-2">
                                 @for (int i = 1; i <= 5; i++)
                                 {
@@ -92,13 +105,9 @@
                                 }
                                 <span class="ms-1 text-muted small">(@review.Rating/5)</span>
                             </div>
-
-                            @* Съдържание *@
                             <p class="card-text fst-italic text-dark mb-3">
                                 "@(review.Content.Length > 200 ? review.Content[..200] + "…" : review.Content)"
                             </p>
-
-                            @* Автор и услуга *@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="fw-semibold">
@@ -114,8 +123,7 @@
                                 <div class="text-end">
                                     <small class="text-muted">@review.CreatedDate.ToString("dd.MM.yyyy")</small>
                                     <br />
-                                    <a asp-action="Details" asp-route-id="@review.Id"
-                                       class="small text-primary">Прочети повече</a>
+                                    <a asp-action="Details" asp-route-id="@review.Id" class="small text-primary">Прочети повече</a>
                                 </div>
                             </div>
                         </div>

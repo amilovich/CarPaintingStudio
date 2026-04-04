@@ -1,12 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using CarPaintingStudio.Data;
 using CarPaintingStudio.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // Глобален Anti-forgery филтър за всички POST заявки
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
 
 // Add DbContext with SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -47,7 +52,6 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    // 500 - Server Error handler
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
@@ -56,7 +60,7 @@ else
     app.UseDeveloperExceptionPage();
 }
 
-// 404 - Not Found handler (важно: преди UseStaticFiles за да хване грешните пътища)
+// 404 handler
 app.UseStatusCodePagesWithReExecute("/Home/NotFound");
 
 app.UseHttpsRedirection();

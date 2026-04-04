@@ -13,7 +13,7 @@ namespace CarPaintingStudio.Controllers
             _context = context;
         }
 
-        // GET: Gallery
+        // GET: Gallery — публично
         public async Task<IActionResult> Index()
         {
             var galleryItems = await _context.GalleryItems
