@@ -1,0 +1,91 @@
+@model IEnumerable<CarPaintingStudio.Models.Service>
+@{
+    ViewData["Title"] = "Управление на услуги";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1 fw-bold">Услуги</h4>
+        <small class="text-muted">Общо: @Model.Count() | Активни: @Model.Count(s => s.IsActive)</small>
+    </div>
+    <a asp-area="Admin" asp-controller="Services" asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Добави услуга
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Услуга</th>
+                        <th>Цена</th>
+                        <th>Продължителност</th>
+                        <th>Записвания</th>
+                        <th>Статус</th>
+                        <th>Добавена на</th>
+                        <th class="text-center">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>Няма добавени услуги.
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var service in Model)
+                    {
+                        <tr class="@(service.IsActive ? "" : "table-secondary text-muted")">
+                            <td><small class="text-muted">#@service.Id</small></td>
+                            <td>
+                                <div class="fw-semibold">@service.Name</div>
+                                <small class="text-muted">@(service.Description.Length > 60 ? service.Description[..60] + "…" : service.Description)</small>
+                            </td>
+                            <td><span class="fw-bold text-success">@service.Price.ToString("F2") лв.</span></td>
+                            <td><i class="fas fa-calendar-day text-primary me-1"></i>@service.DurationDays дни</td>
+                            <td>
+                                <span class="badge bg-secondary">@service.Appointments.Count()</span>
+                            </td>
+                            <td>
+                                @if (service.IsActive)
+                                {
+                                    <span class="badge bg-success"><i class="fas fa-check me-1"></i>Активна</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary"><i class="fas fa-times me-1"></i>Неактивна</span>
+                                }
+                            </td>
+                            <td><small>@service.CreatedDate.ToString("dd.MM.yyyy")</small></td>
+                            <td class="text-center">
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <a asp-area="Admin" asp-controller="Services" asp-action="Edit" asp-route-id="@service.Id"
+                                       class="btn btn-sm btn-outline-primary" title="Редактирай">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form asp-area="Admin" asp-controller="Services" asp-action="ToggleActive"
+                                          asp-route-id="@service.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm @(service.IsActive ? "btn-outline-warning" : "btn-outline-success")"
+                                                title="@(service.IsActive ? "Деактивирай" : "Активирай")">
+                                            <i class="fas @(service.IsActive ? "fa-toggle-off" : "fa-toggle-on")"></i>
+                                        </button>
+                                    </form>
+                                    <a asp-area="Admin" asp-controller="Services" asp-action="Delete" asp-route-id="@service.Id"
+                                       class="btn btn-sm btn-outline-danger" title="Изтрий">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
