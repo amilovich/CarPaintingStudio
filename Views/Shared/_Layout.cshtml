@@ -52,6 +52,49 @@
                             </a>
                         </li>
                     </ul>
+
+                    @* Auth навигация *@
+                    <ul class="navbar-nav ms-auto">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger fw-semibold" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                                        <i class="fas fa-shield-alt"></i> Администрация
+                                    </a>
+                                </li>
+                            }
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle"></i> @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post">
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Изход
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt"></i> Вход
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-primary text-white px-3 ms-1" asp-controller="Account" asp-action="Register">
+                                    <i class="fas fa-user-plus"></i> Регистрация
+                                </a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -83,48 +126,33 @@
                     <h5><i class="fas fa-car"></i> CarPainting Studio</h5>
                     <p>Професионално боядисване на автомобили с внимание към детайла.</p>
                     <div class="social-links mt-3">
-                        <a href="#" class="text-white me-3" title="Facebook">
-                            <i class="fab fa-facebook fa-2x"></i>
-                        </a>
-                        <a href="#" class="text-white me-3" title="Instagram">
-                            <i class="fab fa-instagram fa-2x"></i>
-                        </a>
-                        <a href="#" class="text-white me-3" title="YouTube">
-                            <i class="fab fa-youtube fa-2x"></i>
-                        </a>
-                        <a href="#" class="text-white" title="LinkedIn">
-                            <i class="fab fa-linkedin fa-2x"></i>
-                        </a>
+                        <a href="#" class="text-white me-3" title="Facebook"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="#" class="text-white me-3" title="Instagram"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="#" class="text-white me-3" title="YouTube"><i class="fab fa-youtube fa-2x"></i></a>
+                        <a href="#" class="text-white" title="LinkedIn"><i class="fab fa-linkedin fa-2x"></i></a>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <h5><i class="fas fa-phone"></i> Контакти</h5>
                     <p class="mb-2">
-                        <i class="fas fa-phone-alt"></i> 
+                        <i class="fas fa-phone-alt"></i>
                         <a href="tel:0888123456" class="text-white text-decoration-none">0888 123 456</a>
                     </p>
                     <p class="mb-2">
-                        <i class="fas fa-envelope"></i> 
+                        <i class="fas fa-envelope"></i>
                         <a href="mailto:info@carpaint.bg" class="text-white text-decoration-none">info@carpaint.bg</a>
                     </p>
                     <p class="mb-0">
-                        <i class="fas fa-map-marker-alt"></i> 
-                        гр. София, бул. Цариградско шосе 100
+                        <i class="fas fa-map-marker-alt"></i> гр. София, бул. Цариградско шосе 100
                     </p>
                 </div>
                 <div class="col-md-3">
                     <h5><i class="fas fa-clock"></i> Работно време</h5>
-                    <p class="mb-1">
-                        <i class="fas fa-calendar-week"></i> Понеделник - Петък:
-                    </p>
+                    <p class="mb-1"><i class="fas fa-calendar-week"></i> Понеделник - Петък:</p>
                     <p class="ms-4 mb-2">08:00 - 18:00</p>
-                    <p class="mb-1">
-                        <i class="fas fa-calendar-day"></i> Събота:
-                    </p>
+                    <p class="mb-1"><i class="fas fa-calendar-day"></i> Събота:</p>
                     <p class="ms-4 mb-2">09:00 - 14:00</p>
-                    <p class="mb-1">
-                        <i class="fas fa-calendar-times"></i> Неделя:
-                    </p>
+                    <p class="mb-1"><i class="fas fa-calendar-times"></i> Неделя:</p>
                     <p class="ms-4 mb-0">Почивен ден</p>
                 </div>
                 <div class="col-md-3">
@@ -144,9 +172,7 @@
             <hr class="bg-white my-4" />
             <div class="row">
                 <div class="col-md-6">
-                    <p class="mb-0">
-                        &copy; 2025 CarPainting Studio. Всички права запазени.
-                    </p>
+                    <p class="mb-0">&copy; 2025 CarPainting Studio. Всички права запазени.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <a asp-controller="Home" asp-action="Index" class="text-white text-decoration-none me-3">Начало</a>

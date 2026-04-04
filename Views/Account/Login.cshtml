@@ -1,0 +1,55 @@
+@model CarPaintingStudio.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white text-center">
+                    <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Вход в системата</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Login" method="post">
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <input asp-for="Email" class="form-control" placeholder="example@email.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold"></label>
+                            <input asp-for="Password" class="form-control" placeholder="Паролата ти" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            <input asp-for="RememberMe" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label"></label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-dark btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Влез
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr />
+                    <p class="text-center mb-0">
+                        Нямаш акаунт?
+                        <a asp-action="Register" class="text-primary fw-semibold">Регистрирай се</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
