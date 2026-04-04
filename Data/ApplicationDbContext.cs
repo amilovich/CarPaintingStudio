@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using CarPaintingStudio.Models;
 
 namespace CarPaintingStudio.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -64,7 +66,7 @@ namespace CarPaintingStudio.Data
                     Price = 2500m,
                     DurationDays = 7,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = new DateTime(2025, 1, 1)
                 },
                 new Service
                 {
@@ -74,7 +76,7 @@ namespace CarPaintingStudio.Data
                     Price = 800m,
                     DurationDays = 3,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = new DateTime(2025, 1, 1)
                 },
                 new Service
                 {
@@ -84,7 +86,7 @@ namespace CarPaintingStudio.Data
                     Price = 450m,
                     DurationDays = 2,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = new DateTime(2025, 1, 1)
                 },
                 new Service
                 {
@@ -94,7 +96,7 @@ namespace CarPaintingStudio.Data
                     Price = 3200m,
                     DurationDays = 8,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = new DateTime(2025, 1, 1)
                 }
             );
 
@@ -139,7 +141,7 @@ namespace CarPaintingStudio.Data
                     AfterImageUrl = "/images/gallery/merc-after.jpg",
                     CompletedDate = new DateTime(2024, 12, 15),
                     IsVisible = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = new DateTime(2025, 1, 1)
                 },
                 new GalleryItem
                 {
@@ -152,7 +154,7 @@ namespace CarPaintingStudio.Data
                     AfterImageUrl = "/images/gallery/bmw-after.jpg",
                     CompletedDate = new DateTime(2025, 1, 10),
                     IsVisible = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = new DateTime(2025, 1, 1)
                 }
             );
         }
