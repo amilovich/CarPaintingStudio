@@ -1,0 +1,142 @@
+@model CarPaintingStudio.Models.Appointment
+@{
+    ViewData["Title"] = "Детайли на записване";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-eye me-2"></i>Записване #@Model.Id</h5>
+                @{
+                    var (badgeClass, label) = Model.Status switch
+                    {
+                        CarPaintingStudio.Models.AppointmentStatus.Pending    => ("bg-warning text-dark", "Чакащ"),
+                        CarPaintingStudio.Models.AppointmentStatus.Confirmed  => ("bg-light text-dark", "Потвърден"),
+                        CarPaintingStudio.Models.AppointmentStatus.InProgress => ("bg-primary", "В процес"),
+                        CarPaintingStudio.Models.AppointmentStatus.Completed  => ("bg-success", "Завършен"),
+                        CarPaintingStudio.Models.AppointmentStatus.Cancelled  => ("bg-danger", "Отказан"),
+                        _ => ("bg-secondary", "Неизвестен")
+                    };
+                }
+                <span class="badge @badgeClass fs-6">@label</span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted text-uppercase fw-bold mb-3">
+                            <i class="fas fa-user me-2"></i>Данни за клиента
+                        </h6>
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <th class="text-muted" style="width:40%">Клиент</th>
+                                <td class="fw-semibold">@Model.CustomerName</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Телефон</th>
+                                <td><a href="tel:@Model.Phone">@Model.Phone</a></td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Имейл</th>
+                                <td><a href="mailto:@Model.Email">@Model.Email</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted text-uppercase fw-bold mb-3">
+                            <i class="fas fa-car me-2"></i>Данни за автомобила
+                        </h6>
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <th class="text-muted" style="width:40%">Марка</th>
+                                <td>@Model.CarBrand</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Модел</th>
+                                <td>@Model.CarModel</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Година</th>
+                                <td>@(Model.CarYear?.ToString() ?? "—")</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted text-uppercase fw-bold mb-3">
+                            <i class="fas fa-tools me-2"></i>Услуга и дата
+                        </h6>
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <th class="text-muted" style="width:40%">Услуга</th>
+                                <td class="fw-semibold">@Model.Service?.Name</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Цена</th>
+                                <td class="text-success fw-bold">@Model.Service?.Price.ToString("F2") лв.</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Дата</th>
+                                <td>@Model.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Записан на</th>
+                                <td><small>@Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</small></td>
+                            </tr>
+                        </table>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <div class="col-12">
+                            <h6 class="text-muted text-uppercase fw-bold mb-2">
+                                <i class="fas fa-sticky-note me-2"></i>Забележки
+                            </h6>
+                            <div class="alert alert-light border">@Model.Notes</div>
+                        </div>
+                    }
+                </div>
+
+                @* Бутони за промяна на статус *@
+                <hr />
+                <h6 class="text-muted text-uppercase fw-bold mb-3">
+                    <i class="fas fa-exchange-alt me-2"></i>Промяна на статус
+                </h6>
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var status in Enum.GetValues<CarPaintingStudio.Models.AppointmentStatus>())
+                    {
+                        if (status != Model.Status)
+                        {
+                            var (btnClass, btnLabel) = status switch
+                            {
+                                CarPaintingStudio.Models.AppointmentStatus.Pending    => ("btn-outline-warning", "Чакащ"),
+                                CarPaintingStudio.Models.AppointmentStatus.Confirmed  => ("btn-outline-info", "Потвърден"),
+                                CarPaintingStudio.Models.AppointmentStatus.InProgress => ("btn-outline-primary", "В процес"),
+                                CarPaintingStudio.Models.AppointmentStatus.Completed  => ("btn-outline-success", "Завършен"),
+                                CarPaintingStudio.Models.AppointmentStatus.Cancelled  => ("btn-outline-danger", "Отказан"),
+                                _ => ("btn-outline-secondary", status.ToString())
+                            };
+                            <form asp-area="Admin" asp-controller="Appointments"
+                                  asp-action="ChangeStatus" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <input type="hidden" name="status" value="@status" />
+                                <button type="submit" class="btn btn-sm @btnClass">@btnLabel</button>
+                            </form>
+                        }
+                    }
+                </div>
+
+                <hr />
+                <div class="d-flex gap-2">
+                    <a asp-area="Admin" asp-controller="Appointments" asp-action="Edit" asp-route-id="@Model.Id"
+                       class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>Редактирай
+                    </a>
+                    <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Назад
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

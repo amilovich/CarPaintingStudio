@@ -1,0 +1,217 @@
+@model IEnumerable<CarPaintingStudio.Models.Appointment>
+@{
+    ViewData["Title"] = "Управление на записвания";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@* Статистика *@
+<div class="row g-3 mb-4">
+    <div class="col">
+        <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+           class="text-decoration-none">
+            <div class="card shadow-sm text-center py-3 @(ViewBag.CurrentStatus == null ? "border-primary" : "")">
+                <div class="fw-bold fs-4">@ViewBag.TotalCount</div>
+                <small class="text-muted">Всички</small>
+            </div>
+        </a>
+    </div>
+    <div class="col">
+        <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+           asp-route-status="Pending" class="text-decoration-none">
+            <div class="card shadow-sm text-center py-3 border-warning @(ViewBag.CurrentStatus == "Pending" ? "bg-warning bg-opacity-10" : "")">
+                <div class="fw-bold fs-4 text-warning">@ViewBag.PendingCount</div>
+                <small class="text-muted">Чакащи</small>
+            </div>
+        </a>
+    </div>
+    <div class="col">
+        <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+           asp-route-status="Confirmed" class="text-decoration-none">
+            <div class="card shadow-sm text-center py-3 border-info @(ViewBag.CurrentStatus == "Confirmed" ? "bg-info bg-opacity-10" : "")">
+                <div class="fw-bold fs-4 text-info">@ViewBag.ConfirmedCount</div>
+                <small class="text-muted">Потвърдени</small>
+            </div>
+        </a>
+    </div>
+    <div class="col">
+        <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+           asp-route-status="Completed" class="text-decoration-none">
+            <div class="card shadow-sm text-center py-3 border-success @(ViewBag.CurrentStatus == "Completed" ? "bg-success bg-opacity-10" : "")">
+                <div class="fw-bold fs-4 text-success">@ViewBag.CompletedCount</div>
+                <small class="text-muted">Завършени</small>
+            </div>
+        </a>
+    </div>
+    <div class="col">
+        <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+           asp-route-status="Cancelled" class="text-decoration-none">
+            <div class="card shadow-sm text-center py-3 border-danger @(ViewBag.CurrentStatus == "Cancelled" ? "bg-danger bg-opacity-10" : "")">
+                <div class="fw-bold fs-4 text-danger">@ViewBag.CancelledCount</div>
+                <small class="text-muted">Отказани</small>
+            </div>
+        </a>
+    </div>
+</div>
+
+@* Търсене *@
+<div class="card shadow-sm mb-4">
+    <div class="card-body py-2">
+        <form asp-area="Admin" asp-controller="Appointments" asp-action="Index" method="get"
+              class="d-flex gap-2 align-items-center">
+            <input type="hidden" name="status" value="@ViewBag.CurrentStatus" />
+            <i class="fas fa-search text-muted"></i>
+            <input type="text" name="search" value="@ViewBag.CurrentSearch"
+                   class="form-control form-control-sm"
+                   placeholder="Търси по клиент, марка, модел или имейл..." />
+            <button type="submit" class="btn btn-sm btn-primary">Търси</button>
+            @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch as string))
+            {
+                <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+                   asp-route-status="@ViewBag.CurrentStatus" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-times"></i>
+                </a>
+            }
+        </form>
+    </div>
+</div>
+
+@* Таблица *@
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-calendar-times fa-3x mb-3 d-block"></i>
+                Няма записвания по избраните критерии.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Клиент</th>
+                            <th>Автомобил</th>
+                            <th>Услуга</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                            <th>Промяна на статус</th>
+                            <th class="text-center">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model)
+                        {
+                            <tr>
+                                <td><small class="text-muted">#@a.Id</small></td>
+                                <td>
+                                    <div class="fw-semibold">@a.CustomerName</div>
+                                    <small class="text-muted">@a.Phone</small>
+                                </td>
+                                <td>
+                                    <div>@a.CarBrand @a.CarModel</div>
+                                    @if (a.CarYear.HasValue)
+                                    {
+                                        <small class="text-muted">@a.CarYear г.</small>
+                                    }
+                                </td>
+                                <td>
+                                    <div>@a.Service?.Name</div>
+                                    <small class="text-success fw-semibold">@a.Service?.Price.ToString("F2") лв.</small>
+                                </td>
+                                <td>
+                                    <div>@a.AppointmentDate.ToString("dd.MM.yyyy")</div>
+                                    <small class="text-muted">Записан: @a.CreatedDate.ToString("dd.MM.yy")</small>
+                                </td>
+                                <td>
+                                    @{
+                                        var (badgeClass, label) = a.Status switch
+                                        {
+                                            CarPaintingStudio.Models.AppointmentStatus.Pending    => ("bg-warning text-dark", "Чакащ"),
+                                            CarPaintingStudio.Models.AppointmentStatus.Confirmed  => ("bg-info text-dark", "Потвърден"),
+                                            CarPaintingStudio.Models.AppointmentStatus.InProgress => ("bg-primary", "В процес"),
+                                            CarPaintingStudio.Models.AppointmentStatus.Completed  => ("bg-success", "Завършен"),
+                                            CarPaintingStudio.Models.AppointmentStatus.Cancelled  => ("bg-danger", "Отказан"),
+                                            _ => ("bg-secondary", "Неизвестен")
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@label</span>
+                                </td>
+                                <td>
+                                    @* Бутони за бърза промяна на статус *@
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @if (a.Status != CarPaintingStudio.Models.AppointmentStatus.Confirmed)
+                                        {
+                                            <form asp-area="Admin" asp-controller="Appointments"
+                                                  asp-action="ChangeStatus" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@a.Id" />
+                                                <input type="hidden" name="status" value="@CarPaintingStudio.Models.AppointmentStatus.Confirmed" />
+                                                <button type="submit" class="btn btn-xs btn-outline-info" style="font-size:0.7rem;padding:2px 6px;" title="Потвърди">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        @if (a.Status != CarPaintingStudio.Models.AppointmentStatus.InProgress)
+                                        {
+                                            <form asp-area="Admin" asp-controller="Appointments"
+                                                  asp-action="ChangeStatus" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@a.Id" />
+                                                <input type="hidden" name="status" value="@CarPaintingStudio.Models.AppointmentStatus.InProgress" />
+                                                <button type="submit" class="btn btn-xs btn-outline-primary" style="font-size:0.7rem;padding:2px 6px;" title="В процес">
+                                                    <i class="fas fa-spinner"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        @if (a.Status != CarPaintingStudio.Models.AppointmentStatus.Completed)
+                                        {
+                                            <form asp-area="Admin" asp-controller="Appointments"
+                                                  asp-action="ChangeStatus" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@a.Id" />
+                                                <input type="hidden" name="status" value="@CarPaintingStudio.Models.AppointmentStatus.Completed" />
+                                                <button type="submit" class="btn btn-xs btn-outline-success" style="font-size:0.7rem;padding:2px 6px;" title="Завърши">
+                                                    <i class="fas fa-check-double"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        @if (a.Status != CarPaintingStudio.Models.AppointmentStatus.Cancelled)
+                                        {
+                                            <form asp-area="Admin" asp-controller="Appointments"
+                                                  asp-action="ChangeStatus" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@a.Id" />
+                                                <input type="hidden" name="status" value="@CarPaintingStudio.Models.AppointmentStatus.Cancelled" />
+                                                <button type="submit" class="btn btn-xs btn-outline-danger" style="font-size:0.7rem;padding:2px 6px;" title="Откажи">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        <a asp-area="Admin" asp-controller="Appointments"
+                                           asp-action="Details" asp-route-id="@a.Id"
+                                           class="btn btn-sm btn-outline-info" title="Детайли">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-area="Admin" asp-controller="Appointments"
+                                           asp-action="Edit" asp-route-id="@a.Id"
+                                           class="btn btn-sm btn-outline-warning" title="Редактирай">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-area="Admin" asp-controller="Appointments"
+                                           asp-action="Delete" asp-route-id="@a.Id"
+                                           class="btn btn-sm btn-outline-danger" title="Изтрий">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

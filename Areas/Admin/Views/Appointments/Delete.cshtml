@@ -1,0 +1,61 @@
+@model CarPaintingStudio.Models.Appointment
+@{
+    ViewData["Title"] = "Изтриване на записване";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-trash me-2"></i>Изтриване на записване #@Model.Id</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Сигурни ли сте, че искате да изтриете това записване? Действието е необратимо.
+                </div>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th class="table-light" style="width:40%">Клиент</th>
+                        <td><strong>@Model.CustomerName</strong></td>
+                    </tr>
+                    <tr>
+                        <th class="table-light">Телефон</th>
+                        <td>@Model.Phone</td>
+                    </tr>
+                    <tr>
+                        <th class="table-light">Автомобил</th>
+                        <td>@Model.CarBrand @Model.CarModel @(Model.CarYear.HasValue ? $"({Model.CarYear})" : "")</td>
+                    </tr>
+                    <tr>
+                        <th class="table-light">Услуга</th>
+                        <td>@Model.Service?.Name</td>
+                    </tr>
+                    <tr>
+                        <th class="table-light">Дата</th>
+                        <td>@Model.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                    </tr>
+                    <tr>
+                        <th class="table-light">Статус</th>
+                        <td>@Model.Status</td>
+                    </tr>
+                </table>
+
+                <form asp-area="Admin" asp-controller="Appointments"
+                      asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Изтрий
+                        </button>
+                        <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+                           class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Откажи
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
