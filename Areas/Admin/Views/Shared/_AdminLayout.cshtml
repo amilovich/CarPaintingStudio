@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin | CarPainting Studio</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body { background-color: #f4f6f9; }
+        .admin-sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            width: 250px;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 100;
+            padding-top: 20px;
+        }
+        .admin-sidebar .nav-link {
+            color: #adb5bd;
+            padding: 12px 20px;
+            border-radius: 0;
+            transition: all 0.2s;
+        }
+        .admin-sidebar .nav-link:hover,
+        .admin-sidebar .nav-link.active {
+            color: #fff;
+            background-color: rgba(255,255,255,0.1);
+            border-left: 3px solid #e74c3c;
+        }
+        .admin-sidebar .brand {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 15px 20px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: block;
+            text-decoration: none;
+        }
+        .admin-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .admin-topbar {
+            background: #fff;
+            padding: 12px 20px;
+            border-bottom: 1px solid #dee2e6;
+            margin: -20px -20px 20px -20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stat-card { border-left: 4px solid; border-radius: 8px; }
+        .stat-card.blue   { border-left-color: #3498db; }
+        .stat-card.green  { border-left-color: #2ecc71; }
+        .stat-card.orange { border-left-color: #e67e22; }
+        .stat-card.red    { border-left-color: #e74c3c; }
+        .stat-card.purple { border-left-color: #9b59b6; }
+        .stat-card.teal   { border-left-color: #1abc9c; }
+    </style>
+</head>
+<body>
+    @* Sidebar *@
+    <div class="admin-sidebar">
+        <a class="brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+            <i class="fas fa-shield-alt me-2 text-danger"></i>CarPaint Admin
+        </a>
+        <nav class="nav flex-column mt-2">
+            <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+            <a class="nav-link" asp-area="Admin" asp-controller="Services" asp-action="Index">
+                <i class="fas fa-tools me-2"></i>Услуги
+            </a>
+            <a class="nav-link" asp-area="Admin" asp-controller="Appointments" asp-action="Index">
+                <i class="fas fa-calendar-check me-2"></i>Записвания
+            </a>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 20px;" />
+            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-external-link-alt me-2"></i>Към сайта
+            </a>
+        </nav>
+    </div>
+
+    @* Main content *@
+    <div class="admin-content">
+        <div class="admin-topbar">
+            <h5 class="mb-0 fw-bold text-dark">@ViewData["Title"]</h5>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small">
+                    <i class="fas fa-user-shield me-1 text-danger"></i>@User.Identity?.Name
+                </span>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-sign-out-alt me-1"></i>Изход
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <main>
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
