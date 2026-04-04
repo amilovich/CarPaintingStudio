@@ -32,7 +32,8 @@ namespace CarPaintingStudio.Models
         [Display(Name = "Добавена на")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        // Navigation property
+        // Navigation properties
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
 }

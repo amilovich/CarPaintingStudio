@@ -16,6 +16,7 @@ namespace CarPaintingStudio.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<GalleryItem> GalleryItems { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +31,10 @@ namespace CarPaintingStudio.Data
                       .WithOne(e => e.Service)
                       .HasForeignKey(e => e.ServiceId)
                       .OnDelete(DeleteBehavior.Restrict);
+                entity.HasMany(e => e.Reviews)
+                      .WithOne(e => e.Service)
+                      .HasForeignKey(e => e.ServiceId)
+                      .OnDelete(DeleteBehavior.SetNull);
             });
 
             // Appointment configuration
@@ -48,6 +53,16 @@ namespace CarPaintingStudio.Data
             modelBuilder.Entity<Employee>(entity =>
             {
                 entity.HasKey(e => e.Id);
+            });
+
+            // Review configuration
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasOne(e => e.Service)
+                      .WithMany(e => e.Reviews)
+                      .HasForeignKey(e => e.ServiceId)
+                      .OnDelete(DeleteBehavior.SetNull);
             });
 
             // Seed initial data
@@ -155,6 +170,43 @@ namespace CarPaintingStudio.Data
                     CompletedDate = new DateTime(2025, 1, 10),
                     IsVisible = true,
                     CreatedDate = new DateTime(2025, 1, 1)
+                }
+            );
+
+            // Seed Reviews
+            modelBuilder.Entity<Review>().HasData(
+                new Review
+                {
+                    Id = 1,
+                    AuthorName = "Георги Петров",
+                    AuthorEmail = "georgi@example.com",
+                    Content = "Страхотна работа! Колата изглежда като нова. Препоръчвам на всички!",
+                    Rating = 5,
+                    IsApproved = true,
+                    ServiceId = 1,
+                    CreatedDate = new DateTime(2025, 1, 20)
+                },
+                new Review
+                {
+                    Id = 2,
+                    AuthorName = "Мария Иванова",
+                    AuthorEmail = "maria@example.com",
+                    Content = "Много съм доволна от резултата. Професионален екип и отлично качество.",
+                    Rating = 5,
+                    IsApproved = true,
+                    ServiceId = 3,
+                    CreatedDate = new DateTime(2025, 2, 5)
+                },
+                new Review
+                {
+                    Id = 3,
+                    AuthorName = "Николай Стоянов",
+                    AuthorEmail = "nikolay@example.com",
+                    Content = "Добра работа, доволен съм. Малко по-дълго от очакваното, но резултатът си заслужава.",
+                    Rating = 4,
+                    IsApproved = true,
+                    ServiceId = 2,
+                    CreatedDate = new DateTime(2025, 2, 18)
                 }
             );
         }
