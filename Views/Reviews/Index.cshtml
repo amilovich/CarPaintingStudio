@@ -54,8 +54,8 @@
                                 (5, (int)ViewBag.FiveStars),
                                 (4, (int)ViewBag.FourStars),
                                 (3, (int)ViewBag.ThreeStars),
-                                (2, model.Count(r => r.Rating == 2)),
-                                (1, model.Count(r => r.Rating == 1))
+                                (2, Model.Count(r => r.Rating == 2)),
+                                (1, Model.Count(r => r.Rating == 1))
                             };
                         }
                         @foreach (var (stars, count) in bars)

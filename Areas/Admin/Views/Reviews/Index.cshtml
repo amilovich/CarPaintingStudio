@@ -1,0 +1,126 @@
+@model IEnumerable<CarPaintingStudio.Models.Review>
+@{
+    ViewData["Title"] = "Управление на отзиви";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1 fw-bold">Отзиви</h4>
+        <small class="text-muted">
+            <span class="text-danger fw-semibold">@ViewBag.PendingCount чакащи одобрение</span>
+            &nbsp;|&nbsp;
+            @ViewBag.ApprovedCount одобрени
+        </small>
+    </div>
+</div>
+
+@* Таблица *@
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-comment-slash fa-3x mb-3 d-block"></i>
+                Няма отзиви.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Автор</th>
+                            <th>Отзив</th>
+                            <th>Оценка</th>
+                            <th>Услуга</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                            <th class="text-center">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model)
+                        {
+                            <tr class="@(!r.IsApproved ? "table-warning" : "")">
+                                <td><small class="text-muted">#@r.Id</small></td>
+                                <td>
+                                    <div class="fw-semibold">@r.AuthorName</div>
+                                    <small class="text-muted">@r.AuthorEmail</small>
+                                </td>
+                                <td style="max-width:280px">
+                                    <small>@(r.Content.Length > 100 ? r.Content[..100] + "…" : r.Content)</small>
+                                </td>
+                                <td>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="fas fa-star fa-xs @(i <= r.Rating ? "text-warning" : "text-muted")"></i>
+                                    }
+                                    <small class="text-muted ms-1">(@r.Rating)</small>
+                                </td>
+                                <td>
+                                    @if (r.Service != null)
+                                    {
+                                        <small>@r.Service.Name</small>
+                                    }
+                                    else
+                                    {
+                                        <small class="text-muted">—</small>
+                                    }
+                                </td>
+                                <td>
+                                    <small>@r.CreatedDate.ToString("dd.MM.yyyy")</small>
+                                </td>
+                                <td>
+                                    @if (r.IsApproved)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Одобрен
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-clock me-1"></i>Чакащ
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        @if (!r.IsApproved)
+                                        {
+                                            <form asp-area="Admin" asp-controller="Reviews"
+                                                  asp-action="Approve" asp-route-id="@r.Id" method="post">
+                                                <button type="submit" class="btn btn-sm btn-success" title="Одобри">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-area="Admin" asp-controller="Reviews"
+                                                  asp-action="Reject" asp-route-id="@r.Id" method="post">
+                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Скрий">
+                                                    <i class="fas fa-eye-slash"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        <form asp-area="Admin" asp-controller="Reviews"
+                                              asp-action="Delete" asp-route-id="@r.Id" method="post"
+                                              onsubmit="return confirm('Изтрий отзива?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Изтрий">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
