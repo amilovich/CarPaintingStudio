@@ -1,62 +1,81 @@
-@model CarPaintingStudio.Controllers.ErrorViewModel
 @{
-    ViewData["Title"] = "Грешка";
+    ViewData["Title"] = "Грешка в сървъра";
 }
 
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-8">
-            <div class="card shadow-lg">
-                <div class="card-body text-center py-5">
-                    <i class="fas fa-exclamation-triangle fa-5x text-danger mb-4"></i>
-                    <h1 class="text-danger mb-3">Упс! Нещо се обърка</h1>
-                    <p class="lead text-muted mb-4">
-                        Възникна неочаквана грешка при обработката на вашата заявка.
-                    </p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
 
-                    @if (Model?.ShowRequestId == true)
-                    {
-                        <div class="alert alert-secondary">
-                            <strong><i class="fas fa-info-circle"></i> Request ID:</strong>
-                            <code>@Model.RequestId</code>
-                        </div>
-                    }
-
-                    <hr class="my-4">
-
-                    <div class="d-flex justify-content-center gap-3">
-                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
-                            <i class="fas fa-home"></i> Към началната страница
-                        </a>
-                        <button onclick="window.history.back()" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-arrow-left"></i> Назад
-                        </button>
-                    </div>
-
-                    <div class="mt-5">
-                        <p class="text-muted">
-                            <i class="fas fa-question-circle"></i>
-                            Ако проблемът продължава, моля свържете се с нас на
-                            <a href="mailto:info@carpaint.bg">info@carpaint.bg</a>
-                        </p>
-                    </div>
-                </div>
+            @* Голямо 500 *@
+            <div style="font-size: 8rem; font-weight: 900; line-height: 1;
+                        background: linear-gradient(135deg, #e67e22, #d35400);
+                        -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                500
             </div>
+
+            <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4 d-block"></i>
+
+            <h2 class="fw-bold mb-3">Нещо се обърка от наша страна</h2>
+            <p class="text-muted lead mb-4">
+                Сървърът срещна неочакван проблем при обработката на заявката ви.<br />
+                Нашият екип е уведомен и работим по отстраняването.
+            </p>
+
+            @* Request ID за дебъгване *@
+            @if (ViewBag.ShowRequestId == true)
+            {
+                <div class="alert alert-light border d-inline-block mb-4">
+                    <small class="text-muted">
+                        <i class="fas fa-hashtag me-1"></i>
+                        <strong>Request ID:</strong>
+                        <code>@ViewBag.RequestId</code>
+                    </small>
+                </div>
+            }
+
+            @* Стъпки за действие *@
+            <div class="card border-0 bg-light p-4 mb-4 text-start d-inline-block">
+                <p class="fw-semibold mb-2 text-center">Какво можете да направите:</p>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="fas fa-redo text-warning me-2"></i>
+                        Опреснете страницата след малко
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-home text-warning me-2"></i>
+                        Върнете се на <a asp-controller="Home" asp-action="Index" class="text-decoration-none">началната страница</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope text-warning me-2"></i>
+                        Свържете се с нас на
+                        <a href="mailto:info@carpaint.bg" class="text-decoration-none">info@carpaint.bg</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg px-4">
+                    <i class="fas fa-home me-2"></i>Начало
+                </a>
+                <button onclick="location.reload()" class="btn btn-outline-warning btn-lg px-4">
+                    <i class="fas fa-redo me-2"></i>Опресни
+                </button>
+                <button onclick="window.history.back()" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="fas fa-arrow-left me-2"></i>Назад
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
 
 <style>
+    body { background-color: #f8f9fa; }
     .fa-exclamation-triangle {
         animation: pulse 2s infinite;
     }
-
     @@keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.6;
-        }
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
     }
 </style>

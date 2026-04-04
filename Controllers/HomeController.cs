@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Diagnostics;
 using CarPaintingStudio.Data;
 using System.Diagnostics;
 using CarPaintingStudio.Models;
@@ -46,10 +47,32 @@ namespace CarPaintingStudio.Controllers
             return View(employees);
         }
 
+        // Custom 404 - Not Found
+        [Route("Home/NotFound")]
+        [Route("404")]
+        public IActionResult PageNotFound()
+        {
+            Response.StatusCode = 404;
+            return View("NotFound");
+        }
+
+        // Custom 500 - Server Error
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var exceptionFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            var requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+
+            if (exceptionFeature != null)
+            {
+                _logger.LogError(exceptionFeature.Error,
+                    "Unhandled exception on path {Path}", exceptionFeature.Path);
+            }
+
+            ViewBag.RequestId = requestId;
+            ViewBag.ShowRequestId = !string.IsNullOrEmpty(requestId);
+
+            return View();
         }
     }
 
