@@ -1,240 +1,259 @@
-@model IEnumerable<CarPaintingStudio.Models.Appointment>
+@model CarPaintingStudio.ViewModels.PaginatedList<CarPaintingStudio.Models.Appointment>
 @{
-    ViewData["Title"] = "Записвания";
+    ViewData["Title"] = "Моите записвания";
+    var filter = ViewBag.Filter as CarPaintingStudio.ViewModels.AppointmentFilterViewModel
+                 ?? new CarPaintingStudio.ViewModels.AppointmentFilterViewModel();
 }
 
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-md-10">
-            <h1>
-                <i class="fas fa-calendar-alt"></i> Управление на записванията
-            </h1>
-            <p class="lead">Преглед и управление на всички записвания за услуги</p>
+<div class="container mt-4">
+
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold">
+                <i class="fas fa-calendar-alt text-primary me-2"></i>
+                @(User.IsInRole("Admin") ? "Всички записвания" : "Моите записвания")
+            </h2>
+            <p class="text-muted">Преглед на всички записвания за услуги</p>
         </div>
-        <div class="col-md-2 text-end">
+        <div class="col-md-4 text-md-end">
             <a asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Ново записване
+                <i class="fas fa-plus me-1"></i>Ново записване
             </a>
         </div>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card border-warning shadow-sm">
-                <div class="card-body text-center">
-                    <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
-                         style="width: 60px; height: 60px;">
-                        <i class="fas fa-clock fa-2x"></i>
-                    </div>
-                    <h3 class="mb-0">@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.Pending)</h3>
-                    <p class="text-muted mb-0">Чакащи</p>
+    @* Статистически карти *@
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <a asp-action="Index" asp-route-status="Pending"
+               asp-route-search="@filter.Search" class="text-decoration-none">
+                <div class="card shadow-sm text-center py-3 border-warning
+                     @(filter.Status == "Pending" ? "bg-warning bg-opacity-10" : "")">
+                    <div class="fw-bold fs-3 text-warning">@ViewBag.PendingCount</div>
+                    <small class="text-muted">Чакащи</small>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card border-info shadow-sm">
-                <div class="card-body text-center">
-                    <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
-                         style="width: 60px; height: 60px;">
-                        <i class="fas fa-check fa-2x"></i>
-                    </div>
-                    <h3 class="mb-0">@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.Confirmed)</h3>
-                    <p class="text-muted mb-0">Потвърдени</p>
+        <div class="col-6 col-md-3">
+            <a asp-action="Index" asp-route-status="Confirmed"
+               asp-route-search="@filter.Search" class="text-decoration-none">
+                <div class="card shadow-sm text-center py-3 border-info
+                     @(filter.Status == "Confirmed" ? "bg-info bg-opacity-10" : "")">
+                    <div class="fw-bold fs-3 text-info">@ViewBag.ConfirmedCount</div>
+                    <small class="text-muted">Потвърдени</small>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card border-primary shadow-sm">
-                <div class="card-body text-center">
-                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
-                         style="width: 60px; height: 60px;">
-                        <i class="fas fa-spinner fa-2x"></i>
-                    </div>
-                    <h3 class="mb-0">@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.InProgress)</h3>
-                    <p class="text-muted mb-0">В процес</p>
+        <div class="col-6 col-md-3">
+            <a asp-action="Index" asp-route-status="InProgress"
+               asp-route-search="@filter.Search" class="text-decoration-none">
+                <div class="card shadow-sm text-center py-3 border-primary
+                     @(filter.Status == "InProgress" ? "bg-primary bg-opacity-10" : "")">
+                    <div class="fw-bold fs-3 text-primary">@ViewBag.InProgressCount</div>
+                    <small class="text-muted">В процес</small>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card border-success shadow-sm">
-                <div class="card-body text-center">
-                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
-                         style="width: 60px; height: 60px;">
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                    <h3 class="mb-0">@Model.Count(a => a.Status == CarPaintingStudio.Models.AppointmentStatus.Completed)</h3>
-                    <p class="text-muted mb-0">Завършени</p>
+        <div class="col-6 col-md-3">
+            <a asp-action="Index" asp-route-status="Completed"
+               asp-route-search="@filter.Search" class="text-decoration-none">
+                <div class="card shadow-sm text-center py-3 border-success
+                     @(filter.Status == "Completed" ? "bg-success bg-opacity-10" : "")">
+                    <div class="fw-bold fs-3 text-success">@ViewBag.CompletedCount</div>
+                    <small class="text-muted">Завършени</small>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
-    <!-- Filter buttons -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-primary active" onclick="filterAppointments('all')">
-                    <i class="fas fa-list"></i> Всички
-                </button>
-                <button type="button" class="btn btn-outline-warning" onclick="filterAppointments('pending')">
-                    <i class="fas fa-clock"></i> Чакащи
-                </button>
-                <button type="button" class="btn btn-outline-info" onclick="filterAppointments('confirmed')">
-                    <i class="fas fa-check"></i> Потвърдени
-                </button>
-                <button type="button" class="btn btn-outline-primary" onclick="filterAppointments('inprogress')">
-                    <i class="fas fa-spinner"></i> В процес
-                </button>
-                <button type="button" class="btn btn-outline-success" onclick="filterAppointments('completed')">
-                    <i class="fas fa-check-circle"></i> Завършени
-                </button>
-                <button type="button" class="btn btn-outline-danger" onclick="filterAppointments('cancelled')">
-                    <i class="fas fa-times-circle"></i> Отказани
-                </button>
-            </div>
+    @* Форма за търсене и филтриране *@
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-search me-1"></i>Търсене
+                    </label>
+                    <input type="text" name="Search" value="@filter.Search"
+                           class="form-control" placeholder="Клиент, марка, модел, имейл..." />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Статус</label>
+                    <select name="Status" class="form-select">
+                        <option value="">Всички статуси</option>
+                        <option value="Pending"    selected="@(filter.Status == "Pending")">Чакащ</option>
+                        <option value="Confirmed"  selected="@(filter.Status == "Confirmed")">Потвърден</option>
+                        <option value="InProgress" selected="@(filter.Status == "InProgress")">В процес</option>
+                        <option value="Completed"  selected="@(filter.Status == "Completed")">Завършен</option>
+                        <option value="Cancelled"  selected="@(filter.Status == "Cancelled")">Отказан</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">От дата</label>
+                    <input type="date" name="DateFrom"
+                           value="@filter.DateFrom?.ToString("yyyy-MM-dd")"
+                           class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">До дата</label>
+                    <input type="date" name="DateTo"
+                           value="@filter.DateTo?.ToString("yyyy-MM-dd")"
+                           class="form-control" />
+                </div>
+                <div class="col-md-1 d-flex gap-1">
+                    <button type="submit" class="btn btn-primary w-100" title="Търси">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary" title="Изчисти">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 
+    @* Брой резултати *@
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <small class="text-muted">
+            Показани <strong>@Model.Count</strong> от <strong>@Model.TotalCount</strong> записвания
+        </small>
+        <small class="text-muted">Страница @Model.PageIndex от @Model.TotalPages</small>
+    </div>
+
+    @* Таблица *@
     @if (!Model.Any())
     {
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> Все още няма записвания.
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-times fa-3x text-muted mb-3 d-block"></i>
+            <h5 class="text-muted">Няма намерени записвания.</h5>
+            <a asp-action="Index" class="btn btn-outline-primary mt-2 me-2">
+                <i class="fas fa-times me-1"></i>Изчисти филтрите
+            </a>
+            <a asp-action="Create" class="btn btn-primary mt-2">
+                <i class="fas fa-plus me-1"></i>Ново записване
+            </a>
         </div>
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th><i class="fas fa-calendar"></i> Дата</th>
-                        <th><i class="fas fa-user"></i> Клиент</th>
-                        <th><i class="fas fa-phone"></i> Телефон</th>
-                        <th><i class="fas fa-car"></i> Автомобил</th>
-                        <th><i class="fas fa-tools"></i> Услуга</th>
-                        <th><i class="fas fa-info-circle"></i> Статус</th>
-                        <th><i class="fas fa-cog"></i> Действия</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var appointment in Model)
-                    {
-                        string statusClass = appointment.Status switch
-                        {
-                            CarPaintingStudio.Models.AppointmentStatus.Pending => "pending",
-                            CarPaintingStudio.Models.AppointmentStatus.Confirmed => "confirmed",
-                            CarPaintingStudio.Models.AppointmentStatus.InProgress => "inprogress",
-                            CarPaintingStudio.Models.AppointmentStatus.Completed => "completed",
-                            CarPaintingStudio.Models.AppointmentStatus.Cancelled => "cancelled",
-                            _ => ""
-                        };
-
-                        <tr class="appointment-row" data-status="@statusClass">
-                            <td>
-                                <strong>@appointment.AppointmentDate.ToString("dd.MM.yyyy")</strong>
-                            </td>
-                            <td>
-                                @appointment.CustomerName
-                                <br />
-                                <small class="text-muted">
-                                    <i class="fas fa-envelope"></i> @appointment.Email
-                                </small>
-                            </td>
-                            <td>
-                                <a href="tel:@appointment.Phone">@appointment.Phone</a>
-                            </td>
-                            <td>
-                                <strong>@appointment.CarBrand @appointment.CarModel</strong>
-                                @if (appointment.CarYear.HasValue)
-                                {
-                                    <br />
-                                    <small class="text-muted">(@appointment.CarYear)</small>
-                                }
-                            </td>
-                            <td>
-                                @appointment.Service?.Name
-                                <br />
-                                <small class="text-success">
-                                    <i class="fas fa-tag"></i> @appointment.Service?.Price лв
-                                </small>
-                            </td>
-                            <td>
-                                @switch (appointment.Status)
-                                {
-                                    case CarPaintingStudio.Models.AppointmentStatus.Pending:
-                                        <span class="badge bg-warning">
-                                            <i class="fas fa-clock"></i> Чакащ
-                                        </span>
-                                        break;
-                                    case CarPaintingStudio.Models.AppointmentStatus.Confirmed:
-                                        <span class="badge bg-info">
-                                            <i class="fas fa-check"></i> Потвърден
-                                        </span>
-                                        break;
-                                    case CarPaintingStudio.Models.AppointmentStatus.InProgress:
-                                        <span class="badge bg-primary">
-                                            <i class="fas fa-spinner"></i> В процес
-                                        </span>
-                                        break;
-                                    case CarPaintingStudio.Models.AppointmentStatus.Completed:
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check-circle"></i> Завършен
-                                        </span>
-                                        break;
-                                    case CarPaintingStudio.Models.AppointmentStatus.Cancelled:
-                                        <span class="badge bg-danger">
-                                            <i class="fas fa-times-circle"></i> Отказан
-                                        </span>
-                                        break;
-                                }
-                            </td>
-                            <td>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a asp-action="Details" asp-route-id="@appointment.Id" class="btn btn-info text-white" title="Детайли">
-                                        <i class="fas fa-info-circle"></i>
-                                    </a>
-                                    <a asp-action="Edit" asp-route-id="@appointment.Id" class="btn btn-warning" title="Редактирай">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@appointment.Id" class="btn btn-danger" title="Изтрий">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Дата</th>
+                                <th>Клиент</th>
+                                <th>Автомобил</th>
+                                <th>Услуга</th>
+                                <th>Статус</th>
+                                <th class="text-center">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold">@a.AppointmentDate.ToString("dd.MM.yyyy")</div>
+                                        <small class="text-muted">Записан: @a.CreatedDate.ToString("dd.MM.yy")</small>
+                                    </td>
+                                    <td>
+                                        <div>@a.CustomerName</div>
+                                        <small class="text-muted">@a.Phone</small>
+                                    </td>
+                                    <td>
+                                        <div>@a.CarBrand @a.CarModel</div>
+                                        @if (a.CarYear.HasValue)
+                                        {
+                                            <small class="text-muted">@a.CarYear г.</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div>@a.Service?.Name</div>
+                                        <small class="text-success fw-semibold">
+                                            @a.Service?.Price.ToString("F0") лв.
+                                        </small>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var (badgeClass, label) = a.Status switch
+                                            {
+                                                CarPaintingStudio.Models.AppointmentStatus.Pending    => ("bg-warning text-dark", "Чакащ"),
+                                                CarPaintingStudio.Models.AppointmentStatus.Confirmed  => ("bg-info text-dark", "Потвърден"),
+                                                CarPaintingStudio.Models.AppointmentStatus.InProgress => ("bg-primary", "В процес"),
+                                                CarPaintingStudio.Models.AppointmentStatus.Completed  => ("bg-success", "Завършен"),
+                                                CarPaintingStudio.Models.AppointmentStatus.Cancelled  => ("bg-danger", "Отказан"),
+                                                _ => ("bg-secondary", "Неизвестен")
+                                            };
+                                        }
+                                        <span class="badge @badgeClass">@label</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex gap-1 justify-content-center">
+                                            <a asp-action="Details" asp-route-id="@a.Id"
+                                               class="btn btn-sm btn-outline-info" title="Детайли">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <a asp-action="Edit" asp-route-id="@a.Id"
+                                                   class="btn btn-sm btn-outline-warning" title="Редактирай">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@a.Id"
+                                                   class="btn btn-sm btn-outline-danger" title="Изтрий">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-
+        @* Pagination *@
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mt-4 d-flex justify-content-center" aria-label="Pagination">
+                <ul class="pagination">
+                    <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(Model.PageIndex - 1)"
+                           asp-route-search="@filter.Search"
+                           asp-route-status="@filter.Status"
+                           asp-route-dateFrom="@filter.DateFrom?.ToString("yyyy-MM-dd")"
+                           asp-route-dateTo="@filter.DateTo?.ToString("yyyy-MM-dd")">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                            <a class="page-link" asp-action="Index"
+                               asp-route-page="@i"
+                               asp-route-search="@filter.Search"
+                               asp-route-status="@filter.Status"
+                               asp-route-dateFrom="@filter.DateFrom?.ToString("yyyy-MM-dd")"
+                               asp-route-dateTo="@filter.DateTo?.ToString("yyyy-MM-dd")">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(Model.PageIndex + 1)"
+                           asp-route-search="@filter.Search"
+                           asp-route-status="@filter.Status"
+                           asp-route-dateFrom="@filter.DateFrom?.ToString("yyyy-MM-dd")"
+                           asp-route-dateTo="@filter.DateTo?.ToString("yyyy-MM-dd")">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
     }
 </div>
-
-@section Scripts {
-    <script>
-        function filterAppointments(status) {
-            const rows = document.querySelectorAll('.appointment-row');
-            const buttons = document.querySelectorAll('.btn-group .btn');
-            
-            // Remove active class from all buttons
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // Add active class to clicked button
-            event.target.closest('button').classList.add('active');
-            
-            if (status === 'all') {
-                rows.forEach(row => row.style.display = '');
-            } else {
-                rows.forEach(row => {
-                    if (row.dataset.status === status) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            }
-        }
-    </script>
-}
