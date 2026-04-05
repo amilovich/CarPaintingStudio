@@ -10,21 +10,57 @@ namespace CarPaintingStudio.Controllers
     public class ServicesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private const int PageSize = 6;
 
         public ServicesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Services — публично
-        public async Task<IActionResult> Index()
+        // GET: Services — публично, с pagination и search/filter
+        public async Task<IActionResult> Index(ServiceFilterViewModel filter)
         {
-            var services = await _context.Services
-                .Where(s => s.IsActive)
-                .OrderByDescending(s => s.CreatedDate)
-                .ToListAsync();
+            filter.Page = filter.Page < 1 ? 1 : filter.Page;
 
-            return View(services);
+            var query = _context.Services
+                .Where(s => s.IsActive)
+                .AsQueryable();
+
+            // Търсене по ime
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                var searchLower = filter.Search.ToLower();
+                query = query.Where(s =>
+                    s.Name.ToLower().Contains(searchLower) ||
+                    s.Description.ToLower().Contains(searchLower));
+            }
+
+            // Филтър по цена
+            if (filter.MinPrice.HasValue)
+                query = query.Where(s => s.Price >= filter.MinPrice.Value);
+
+            if (filter.MaxPrice.HasValue)
+                query = query.Where(s => s.Price <= filter.MaxPrice.Value);
+
+            // Сортиране
+            query = filter.SortBy switch
+            {
+                "price_asc"      => query.OrderBy(s => s.Price),
+                "price_desc"     => query.OrderByDescending(s => s.Price),
+                "duration_asc"   => query.OrderBy(s => s.DurationDays),
+                "duration_desc"  => query.OrderByDescending(s => s.DurationDays),
+                "name_asc"       => query.OrderBy(s => s.Name),
+                _                => query.OrderByDescending(s => s.CreatedDate)
+            };
+
+            var paginatedServices = await PaginatedList<Service>
+                .CreateAsync(query, filter.Page, PageSize);
+
+            ViewBag.MinPossible = await _context.Services.Where(s => s.IsActive).MinAsync(s => (decimal?)s.Price) ?? 0;
+            ViewBag.MaxPossible = await _context.Services.Where(s => s.IsActive).MaxAsync(s => (decimal?)s.Price) ?? 10000;
+            ViewBag.Filter = filter;
+
+            return View(paginatedServices);
         }
 
         // GET: Services/Details/5 — публично
