@@ -3,6 +3,7 @@ using System;
 using CarPaintingStudio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarPaintingStudio.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260404122707_AddIdentitySupport")]
+    partial class AddIdentitySupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -94,6 +97,9 @@ namespace CarPaintingStudio.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("AppointmentDate")
                         .HasColumnType("TEXT");
 
@@ -136,91 +142,13 @@ namespace CarPaintingStudio.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("ServiceId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Appointments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AppointmentDate = new DateTime(2025, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CarBrand = "Toyota",
-                            CarModel = "Camry",
-                            CarYear = 2020,
-                            CreatedDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CustomerName = "Георги Петров",
-                            Email = "georgi@example.com",
-                            Notes = "Предпочита тъмно синьо",
-                            Phone = "0877111222",
-                            ServiceId = 1,
-                            Status = 3
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AppointmentDate = new DateTime(2025, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CarBrand = "Honda",
-                            CarModel = "Civic",
-                            CarYear = 2019,
-                            CreatedDate = new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CustomerName = "Мария Иванова",
-                            Email = "maria@example.com",
-                            Phone = "0877222333",
-                            ServiceId = 3,
-                            Status = 3
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AppointmentDate = new DateTime(2025, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CarBrand = "Ford",
-                            CarModel = "Focus",
-                            CarYear = 2021,
-                            CreatedDate = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CustomerName = "Николай Стоянов",
-                            Email = "nikolay@example.com",
-                            Phone = "0877333444",
-                            ServiceId = 2,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AppointmentDate = new DateTime(2025, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CarBrand = "Kia",
-                            CarModel = "Sportage",
-                            CarYear = 2022,
-                            CreatedDate = new DateTime(2025, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CustomerName = "Елена Димитрова",
-                            Email = "elena@example.com",
-                            Notes = "Иска керамично покритие на цялото тяло",
-                            Phone = "0877444555",
-                            ServiceId = 5,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AppointmentDate = new DateTime(2025, 4, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CarBrand = "BMW",
-                            CarModel = "X5",
-                            CarYear = 2023,
-                            CreatedDate = new DateTime(2025, 3, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CustomerName = "Стефан Колев",
-                            Email = "stefan@example.com",
-                            Notes = "Матово черно - целия автомобил",
-                            Phone = "0877555666",
-                            ServiceId = 4,
-                            Status = 0
-                        });
                 });
 
             modelBuilder.Entity("CarPaintingStudio.Models.Employee", b =>
@@ -291,30 +219,6 @@ namespace CarPaintingStudio.Migrations
                             Phone = "0888234567",
                             Position = "Боядисвач",
                             YearsOfExperience = 8
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Bio = "Специалист по vinyl wrap и керамични покрития",
-                            Email = "stoyan.nikolov@carpaint.bg",
-                            FullName = "Стоян Николов",
-                            HireDate = new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Phone = "0888345678",
-                            Position = "Vinyl специалист",
-                            YearsOfExperience = 5
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Bio = "Майстор на полирането и детайлинга",
-                            Email = "dimitar.vasilev@carpaint.bg",
-                            FullName = "Димитър Василев",
-                            HireDate = new DateTime(2019, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Phone = "0888456789",
-                            Position = "Полировчик",
-                            YearsOfExperience = 6
                         });
                 });
 
@@ -389,157 +293,6 @@ namespace CarPaintingStudio.Migrations
                             Description = "Специално матово покритие с керамична защита",
                             IsVisible = true,
                             Title = "BMW M3 - Матово черно"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AfterImageUrl = "/images/gallery/audi-after.jpg",
-                            BeforeImageUrl = "/images/gallery/audi-before.jpg",
-                            CarBrand = "Audi",
-                            CarModel = "A6",
-                            CompletedDate = new DateTime(2025, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedDate = new DateTime(2025, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Пълно боядисване в синьо металик с керамична защита",
-                            IsVisible = true,
-                            Title = "Audi A6 - Синьо металик"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AfterImageUrl = "/images/gallery/porsche-after.jpg",
-                            BeforeImageUrl = "/images/gallery/porsche-before.jpg",
-                            CarBrand = "Porsche",
-                            CarModel = "911",
-                            CompletedDate = new DateTime(2025, 2, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedDate = new DateTime(2025, 2, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Цялостно фолиране с червен vinyl и гланц финиш",
-                            IsVisible = true,
-                            Title = "Porsche 911 - Vinyl wrap червено"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AfterImageUrl = "/images/gallery/vw-after.jpg",
-                            BeforeImageUrl = "/images/gallery/vw-before.jpg",
-                            CarBrand = "Volkswagen",
-                            CarModel = "Golf",
-                            CompletedDate = new DateTime(2025, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedDate = new DateTime(2025, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Profesionalno полиране и нанасяне на керамично покритие",
-                            IsVisible = true,
-                            Title = "VW Golf - Полиране и защита"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AfterImageUrl = "/images/gallery/toyota-after.jpg",
-                            BeforeImageUrl = "/images/gallery/toyota-before.jpg",
-                            CarBrand = "Toyota",
-                            CarModel = "Supra",
-                            CompletedDate = new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedDate = new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Матово сиво покритие с vinyl акценти",
-                            IsVisible = true,
-                            Title = "Toyota Supra - Матово сиво"
-                        });
-                });
-
-            modelBuilder.Entity("CarPaintingStudio.Models.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("AuthorEmail")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AuthorName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ServiceId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Reviews");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AuthorEmail = "georgi@example.com",
-                            AuthorName = "Георги Петров",
-                            Content = "Страхотна работа! Колата изглежда като нова. Боядисаха я перфектно и в срок. Препоръчвам на всички!",
-                            CreatedDate = new DateTime(2025, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsApproved = true,
-                            Rating = 5,
-                            ServiceId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AuthorEmail = "maria@example.com",
-                            AuthorName = "Мария Иванова",
-                            Content = "Много съм доволна от резултата. Полирането е страхотно - колата свети! Екипът е много любезен и професионален.",
-                            CreatedDate = new DateTime(2025, 3, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsApproved = true,
-                            Rating = 5,
-                            ServiceId = 3
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AuthorEmail = "nikolay@example.com",
-                            AuthorName = "Николай Стоянов",
-                            Content = "Добра работа, доволен съм. Малко по-дълго от очакваното но резултатът си заслужава.",
-                            CreatedDate = new DateTime(2025, 2, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsApproved = true,
-                            Rating = 4,
-                            ServiceId = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AuthorEmail = "alex@example.com",
-                            AuthorName = "Александра Тодорова",
-                            Content = "Невероятен резултат с vinyl wrap-а! Колата изглежда като от шоурум. Ще се върна определено.",
-                            CreatedDate = new DateTime(2025, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsApproved = true,
-                            Rating = 5
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AuthorEmail = "test@example.com",
-                            AuthorName = "Тест Потребител",
-                            Content = "Все още чака одобрение - тестов отзив.",
-                            CreatedDate = new DateTime(2025, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsApproved = false,
-                            Rating = 3
                         });
                 });
 
@@ -615,26 +368,6 @@ namespace CarPaintingStudio.Migrations
                             IsActive = true,
                             Name = "Матово боядисване",
                             Price = 3200m
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Нанасяне на керамично покритие за дълготрайна защита на боята",
-                            DurationDays = 3,
-                            IsActive = true,
-                            Name = "Керамично покритие",
-                            Price = 1200m
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreatedDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Цялостно или частично фолиране с висококачествен vinyl",
-                            DurationDays = 5,
-                            IsActive = true,
-                            Name = "Vinyl wrap",
-                            Price = 2800m
                         });
                 });
 
@@ -768,35 +501,17 @@ namespace CarPaintingStudio.Migrations
 
             modelBuilder.Entity("CarPaintingStudio.Models.Appointment", b =>
                 {
+                    b.HasOne("CarPaintingStudio.Models.ApplicationUser", null)
+                        .WithMany("Appointments")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("CarPaintingStudio.Models.Service", "Service")
                         .WithMany("Appointments")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CarPaintingStudio.Models.ApplicationUser", "User")
-                        .WithMany("Appointments")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Service");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CarPaintingStudio.Models.Review", b =>
-                {
-                    b.HasOne("CarPaintingStudio.Models.Service", "Service")
-                        .WithMany("Reviews")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("CarPaintingStudio.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Service");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -858,8 +573,6 @@ namespace CarPaintingStudio.Migrations
             modelBuilder.Entity("CarPaintingStudio.Models.Service", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

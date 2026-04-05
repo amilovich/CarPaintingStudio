@@ -55,6 +55,13 @@ namespace CarPaintingStudio.Models
         [ForeignKey("ServiceId")]
         public virtual Service? Service { get; set; }
 
+        // Връзка към регистриран потребител (незадължително - може да е гост)
+        [Display(Name = "Потребител")]
+        public string? UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ApplicationUser? User { get; set; }
+
         [Display(Name = "Създаден на")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }

@@ -19,4 +19,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
   </ItemGroup>
 
+  <!-- Изключване на тест проекта от главния build -->
+  <ItemGroup>
+    <Compile Remove="CarPaintingStudio.Tests\**" />
+    <Content Remove="CarPaintingStudio.Tests\**" />
+    <EmbeddedResource Remove="CarPaintingStudio.Tests\**" />
+    <None Remove="CarPaintingStudio.Tests\**" />
+  </ItemGroup>
+
 </Project>
