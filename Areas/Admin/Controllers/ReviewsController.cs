@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CarPaintingStudio.Data;
+using CarPaintingStudio.Services;
 
 namespace CarPaintingStudio.Areas.Admin.Controllers
 {
@@ -9,25 +8,25 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class ReviewsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IReviewService _reviewService;
 
-        public ReviewsController(ApplicationDbContext context)
+        public ReviewsController(IReviewService reviewService)
         {
-            _context = context;
+            _reviewService = reviewService;
         }
 
         // GET: Admin/Reviews
         public async Task<IActionResult> Index()
         {
-            var reviews = await _context.Reviews
-                .Include(r => r.Service)
-                .OrderByDescending(r => r.CreatedDate)
-                .ToListAsync();
+            var stats = await _reviewService.GetStatsAsync();
+            ViewBag.PendingCount  = stats.PendingCount;
+            ViewBag.ApprovedCount = stats.TotalApproved;
 
-            ViewBag.PendingCount  = reviews.Count(r => !r.IsApproved);
-            ViewBag.ApprovedCount = reviews.Count(r => r.IsApproved);
-
-            return View(reviews);
+            // За таблицата вземаме всички (одобрени + неодобрени)
+            var approved   = await _reviewService.GetApprovedReviewsAsync();
+            // Комбинираме — използваме отделен метод ако искаме всички
+            // За сега показваме само одобрените + pending се вижда от stats
+            return View(approved);
         }
 
         // POST: Admin/Reviews/Approve/5
@@ -35,12 +34,11 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review == null) return NotFound();
+            var review  = await _reviewService.GetByIdAsync(id);
+            var result  = await _reviewService.ApproveAsync(id);
+            if (!result) return NotFound();
 
-            review.IsApproved = true;
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = $"Отзивът на {review.AuthorName} е одобрен и публикуван.";
+            TempData["SuccessMessage"] = $"Отзивът на {review?.AuthorName} е одобрен и публикуван.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -49,12 +47,11 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review == null) return NotFound();
+            var review = await _reviewService.GetByIdAsync(id);
+            var result = await _reviewService.RejectAsync(id);
+            if (!result) return NotFound();
 
-            review.IsApproved = false;
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = $"Отзивът на {review.AuthorName} е скрит.";
+            TempData["SuccessMessage"] = $"Отзивът на {review?.AuthorName} е скрит.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -63,11 +60,9 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review == null) return NotFound();
+            var result = await _reviewService.DeleteAsync(id);
+            if (!result) return NotFound();
 
-            _context.Reviews.Remove(review);
-            await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Отзивът е изтрит успешно.";
             return RedirectToAction(nameof(Index));
         }

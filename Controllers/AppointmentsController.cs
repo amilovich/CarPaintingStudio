@@ -5,84 +5,42 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CarPaintingStudio.Data;
 using CarPaintingStudio.Models;
+using CarPaintingStudio.Services;
 using CarPaintingStudio.ViewModels;
 
 namespace CarPaintingStudio.Controllers
 {
     public class AppointmentsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAppointmentService _appointmentService;
+        private readonly IServiceService _serviceService;
         private readonly UserManager<ApplicationUser> _userManager;
-        private const int PageSize = 8;
 
         public AppointmentsController(
-            ApplicationDbContext context,
+            IAppointmentService appointmentService,
+            IServiceService serviceService,
             UserManager<ApplicationUser> userManager)
         {
-            _context = context;
-            _userManager = userManager;
+            _appointmentService = appointmentService;
+            _serviceService     = serviceService;
+            _userManager        = userManager;
         }
 
-        // GET: Appointments — само логнати, с pagination и search/filter
+        // GET: Appointments — само логнати
         [Authorize]
         public async Task<IActionResult> Index(AppointmentFilterViewModel filter)
         {
-            filter.Page = filter.Page < 1 ? 1 : filter.Page;
+            var userId  = _userManager.GetUserId(User);
+            var isAdmin = User.IsInRole("Admin");
 
-            var query = _context.Appointments
-                .Include(a => a.Service)
-                .AsQueryable();
+            var paginated = await _appointmentService.GetAppointmentsAsync(filter, userId, isAdmin);
+            var stats     = await _appointmentService.GetStatsAsync(userId, isAdmin);
 
-            // Само своите записвания ако не е Admin
-            if (!User.IsInRole("Admin"))
-            {
-                var userId = _userManager.GetUserId(User);
-                query = query.Where(a => a.UserId == userId);
-            }
-
-            // Търсене по клиент, марка, модел, имейл
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-            {
-                var s = filter.Search.ToLower();
-                query = query.Where(a =>
-                    a.CustomerName.ToLower().Contains(s) ||
-                    a.CarBrand.ToLower().Contains(s) ||
-                    a.CarModel.ToLower().Contains(s) ||
-                    a.Email.ToLower().Contains(s));
-            }
-
-            // Филтър по статус
-            if (!string.IsNullOrEmpty(filter.Status) &&
-                Enum.TryParse<AppointmentStatus>(filter.Status, out var parsedStatus))
-            {
-                query = query.Where(a => a.Status == parsedStatus);
-            }
-
-            // Филтър по период
-            if (filter.DateFrom.HasValue)
-                query = query.Where(a => a.AppointmentDate >= filter.DateFrom.Value);
-
-            if (filter.DateTo.HasValue)
-                query = query.Where(a => a.AppointmentDate <= filter.DateTo.Value);
-
-            query = query.OrderByDescending(a => a.AppointmentDate);
-
-            var paginated = await PaginatedList<Appointment>
-                .CreateAsync(query, filter.Page, PageSize);
-
-            // Статистика за всички (само Admin вижда всички)
-            var baseQuery = _context.Appointments.AsQueryable();
-            if (!User.IsInRole("Admin"))
-            {
-                var userId = _userManager.GetUserId(User);
-                baseQuery = baseQuery.Where(a => a.UserId == userId);
-            }
-
-            ViewBag.PendingCount   = await baseQuery.CountAsync(a => a.Status == AppointmentStatus.Pending);
-            ViewBag.ConfirmedCount = await baseQuery.CountAsync(a => a.Status == AppointmentStatus.Confirmed);
-            ViewBag.InProgressCount= await baseQuery.CountAsync(a => a.Status == AppointmentStatus.InProgress);
-            ViewBag.CompletedCount = await baseQuery.CountAsync(a => a.Status == AppointmentStatus.Completed);
-            ViewBag.Filter = filter;
+            ViewBag.PendingCount    = stats.PendingCount;
+            ViewBag.ConfirmedCount  = stats.ConfirmedCount;
+            ViewBag.InProgressCount = stats.InProgressCount;
+            ViewBag.CompletedCount  = stats.CompletedCount;
+            ViewBag.Filter          = filter;
 
             return View(paginated);
         }
@@ -93,10 +51,7 @@ namespace CarPaintingStudio.Controllers
         {
             if (id == null) return NotFound();
 
-            var appointment = await _context.Appointments
-                .Include(a => a.Service)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var appointment = await _appointmentService.GetByIdWithServiceAsync(id.Value);
             if (appointment == null) return NotFound();
 
             // Не-Admin виждат само своите
@@ -112,15 +67,12 @@ namespace CarPaintingStudio.Controllers
         // GET: Appointments/Create — достъпно за всички
         public async Task<IActionResult> Create()
         {
-            var services = await _context.Services
-                .Where(s => s.IsActive)
-                .OrderBy(s => s.Name)
-                .ToListAsync();
+            var services = await _serviceService.GetActiveServicesAsync();
 
             var viewModel = new CreateAppointmentViewModel
             {
-                AvailableServices = services,
-                AppointmentDate = DateTime.Now.AddDays(1)
+                AvailableServices = services.ToList(),
+                AppointmentDate   = DateTime.Now.AddDays(1)
             };
 
             if (User.Identity?.IsAuthenticated == true)
@@ -129,7 +81,7 @@ namespace CarPaintingStudio.Controllers
                 if (user != null)
                 {
                     viewModel.CustomerName = user.FullName ?? string.Empty;
-                    viewModel.Email = user.Email ?? string.Empty;
+                    viewModel.Email        = user.Email    ?? string.Empty;
                 }
             }
 
@@ -146,31 +98,16 @@ namespace CarPaintingStudio.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.AvailableServices = await _context.Services
-                    .Where(s => s.IsActive).OrderBy(s => s.Name).ToListAsync();
+                var services = await _serviceService.GetActiveServicesAsync();
+                model.AvailableServices = services.ToList();
                 return View(model);
             }
 
-            var appointment = new Appointment
-            {
-                CustomerName    = model.CustomerName,
-                Phone           = model.Phone,
-                Email           = model.Email,
-                CarBrand        = model.CarBrand,
-                CarModel        = model.CarModel,
-                CarYear         = model.CarYear,
-                AppointmentDate = model.AppointmentDate,
-                Notes           = model.Notes,
-                ServiceId       = model.ServiceId,
-                Status          = AppointmentStatus.Pending,
-                CreatedDate     = DateTime.Now
-            };
+            var userId = User.Identity?.IsAuthenticated == true
+                ? _userManager.GetUserId(User)
+                : null;
 
-            if (User.Identity?.IsAuthenticated == true)
-                appointment.UserId = _userManager.GetUserId(User);
-
-            _context.Add(appointment);
-            await _context.SaveChangesAsync();
+            await _appointmentService.CreateAsync(model, userId);
             TempData["SuccessMessage"] = "Записването е създадено успешно! Ще се свържем с Вас скоро.";
             return RedirectToAction(nameof(Index));
         }
@@ -181,12 +118,28 @@ namespace CarPaintingStudio.Controllers
         {
             if (id == null) return NotFound();
 
-            var appointment = await _context.Appointments.FindAsync(id);
+            var appointment = await _appointmentService.GetByIdAsync(id.Value);
             if (appointment == null) return NotFound();
 
-            ViewData["ServiceId"] = new SelectList(
-                await _context.Services.Where(s => s.IsActive).ToListAsync(),
-                "Id", "Name", appointment.ServiceId);
+            var services = await _serviceService.GetActiveServicesAsync();
+            ViewData["ServiceId"] = new SelectList(services, "Id", "Name", appointment.ServiceId);
+
+            ViewBag.Statuses = new SelectList(
+                Enum.GetValues<AppointmentStatus>()
+                    .Select(s => new
+                    {
+                        Value = s,
+                        Text  = s switch
+                        {
+                            AppointmentStatus.Pending    => "Чакащ",
+                            AppointmentStatus.Confirmed  => "Потвърден",
+                            AppointmentStatus.InProgress => "В процес",
+                            AppointmentStatus.Completed  => "Завършен",
+                            AppointmentStatus.Cancelled  => "Отказан",
+                            _                            => s.ToString()
+                        }
+                    }),
+                "Value", "Text", appointment.Status);
 
             return View(appointment);
         }
@@ -195,32 +148,22 @@ namespace CarPaintingStudio.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Appointment appointment)
+        public async Task<IActionResult> Edit(int id, Appointment model)
         {
-            if (id != appointment.Id) return NotFound();
+            if (id != model.Id) return NotFound();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(appointment);
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "Записването е обновено успешно!";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Appointments.Any(e => e.Id == appointment.Id))
-                        return NotFound();
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
+                var services = await _serviceService.GetActiveServicesAsync();
+                ViewData["ServiceId"] = new SelectList(services, "Id", "Name", model.ServiceId);
+                return View(model);
             }
 
-            ViewData["ServiceId"] = new SelectList(
-                await _context.Services.Where(s => s.IsActive).ToListAsync(),
-                "Id", "Name", appointment.ServiceId);
+            var updated = await _appointmentService.UpdateAsync(id, model);
+            if (!updated) return NotFound();
 
-            return View(appointment);
+            TempData["SuccessMessage"] = "Записването е обновено успешно!";
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Appointments/Delete/5 — само Admin
@@ -229,10 +172,7 @@ namespace CarPaintingStudio.Controllers
         {
             if (id == null) return NotFound();
 
-            var appointment = await _context.Appointments
-                .Include(a => a.Service)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var appointment = await _appointmentService.GetByIdWithServiceAsync(id.Value);
             if (appointment == null) return NotFound();
 
             return View(appointment);
@@ -244,14 +184,8 @@ namespace CarPaintingStudio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment != null)
-            {
-                _context.Appointments.Remove(appointment);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Записването е изтрито успешно!";
-            }
-
+            await _appointmentService.DeleteAsync(id);
+            TempData["SuccessMessage"] = "Записването е изтрито успешно!";
             return RedirectToAction(nameof(Index));
         }
     }

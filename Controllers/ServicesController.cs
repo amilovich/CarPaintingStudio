@@ -1,66 +1,26 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CarPaintingStudio.Data;
 using CarPaintingStudio.Models;
+using CarPaintingStudio.Services;
 using CarPaintingStudio.ViewModels;
 
 namespace CarPaintingStudio.Controllers
 {
     public class ServicesController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private const int PageSize = 6;
+        private readonly IServiceService _serviceService;
 
-        public ServicesController(ApplicationDbContext context)
+        public ServicesController(IServiceService serviceService)
         {
-            _context = context;
+            _serviceService = serviceService;
         }
 
-        // GET: Services — публично, с pagination и search/filter
+        // GET: Services — публично
         public async Task<IActionResult> Index(ServiceFilterViewModel filter)
         {
-            filter.Page = filter.Page < 1 ? 1 : filter.Page;
-
-            var query = _context.Services
-                .Where(s => s.IsActive)
-                .AsQueryable();
-
-            // Търсене по ime
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-            {
-                var searchLower = filter.Search.ToLower();
-                query = query.Where(s =>
-                    s.Name.ToLower().Contains(searchLower) ||
-                    s.Description.ToLower().Contains(searchLower));
-            }
-
-            // Филтър по цена
-            if (filter.MinPrice.HasValue)
-                query = query.Where(s => s.Price >= filter.MinPrice.Value);
-
-            if (filter.MaxPrice.HasValue)
-                query = query.Where(s => s.Price <= filter.MaxPrice.Value);
-
-            // Сортиране
-            query = filter.SortBy switch
-            {
-                "price_asc"      => query.OrderBy(s => s.Price),
-                "price_desc"     => query.OrderByDescending(s => s.Price),
-                "duration_asc"   => query.OrderBy(s => s.DurationDays),
-                "duration_desc"  => query.OrderByDescending(s => s.DurationDays),
-                "name_asc"       => query.OrderBy(s => s.Name),
-                _                => query.OrderByDescending(s => s.CreatedDate)
-            };
-
-            var paginatedServices = await PaginatedList<Service>
-                .CreateAsync(query, filter.Page, PageSize);
-
-            ViewBag.MinPossible = await _context.Services.Where(s => s.IsActive).MinAsync(s => (decimal?)s.Price) ?? 0;
-            ViewBag.MaxPossible = await _context.Services.Where(s => s.IsActive).MaxAsync(s => (decimal?)s.Price) ?? 10000;
+            var services = await _serviceService.GetServicesAsync(filter);
             ViewBag.Filter = filter;
-
-            return View(paginatedServices);
+            return View(services);
         }
 
         // GET: Services/Details/5 — публично
@@ -68,10 +28,7 @@ namespace CarPaintingStudio.Controllers
         {
             if (id == null) return NotFound();
 
-            var service = await _context.Services
-                .Include(s => s.Reviews.Where(r => r.IsApproved))
-                .FirstOrDefaultAsync(m => m.Id == id && m.IsActive);
-
+            var service = await _serviceService.GetByIdWithReviewsAsync(id.Value);
             if (service == null) return NotFound();
 
             return View(service);
@@ -92,18 +49,7 @@ namespace CarPaintingStudio.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var service = new Service
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Price = model.Price,
-                DurationDays = model.DurationDays,
-                IsActive = model.IsActive,
-                CreatedDate = DateTime.Now
-            };
-
-            _context.Add(service);
-            await _context.SaveChangesAsync();
+            await _serviceService.CreateAsync(model);
             TempData["SuccessMessage"] = "Услугата е създадена успешно!";
             return RedirectToAction(nameof(Index));
         }
@@ -114,17 +60,17 @@ namespace CarPaintingStudio.Controllers
         {
             if (id == null) return NotFound();
 
-            var service = await _context.Services.FindAsync(id);
+            var service = await _serviceService.GetByIdAsync(id.Value);
             if (service == null) return NotFound();
 
             var viewModel = new ServiceViewModel
             {
-                Id = service.Id,
-                Name = service.Name,
-                Description = service.Description,
-                Price = service.Price,
+                Id           = service.Id,
+                Name         = service.Name,
+                Description  = service.Description,
+                Price        = service.Price,
                 DurationDays = service.DurationDays,
-                IsActive = service.IsActive
+                IsActive     = service.IsActive
             };
 
             return View(viewModel);
@@ -139,16 +85,9 @@ namespace CarPaintingStudio.Controllers
             if (id != model.Id) return NotFound();
             if (!ModelState.IsValid) return View(model);
 
-            var service = await _context.Services.FindAsync(id);
-            if (service == null) return NotFound();
+            var updated = await _serviceService.UpdateAsync(id, model);
+            if (!updated) return NotFound();
 
-            service.Name = model.Name;
-            service.Description = model.Description;
-            service.Price = model.Price;
-            service.DurationDays = model.DurationDays;
-            service.IsActive = model.IsActive;
-
-            await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Услугата е обновена успешно!";
             return RedirectToAction(nameof(Index));
         }
@@ -159,10 +98,7 @@ namespace CarPaintingStudio.Controllers
         {
             if (id == null) return NotFound();
 
-            var service = await _context.Services
-                .Include(s => s.Appointments)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var service = await _serviceService.GetByIdAsync(id.Value);
             if (service == null) return NotFound();
 
             return View(service);
@@ -174,20 +110,13 @@ namespace CarPaintingStudio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var service = await _context.Services
-                .Include(s => s.Appointments)
-                .FirstOrDefaultAsync(s => s.Id == id);
-
-            if (service == null) return NotFound();
-
-            if (service.Appointments.Any())
+            var deleted = await _serviceService.DeleteAsync(id);
+            if (!deleted)
             {
                 TempData["ErrorMessage"] = "Не може да изтриете услуга със свързани записвания!";
                 return RedirectToAction(nameof(Index));
             }
 
-            _context.Services.Remove(service);
-            await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Услугата е изтрита успешно!";
             return RedirectToAction(nameof(Index));
         }

@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CarPaintingStudio.Data;
-using CarPaintingStudio.Models;
+using CarPaintingStudio.Services;
 using CarPaintingStudio.ViewModels;
 
 namespace CarPaintingStudio.Areas.Admin.Controllers
@@ -11,21 +9,18 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class ServicesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceService _serviceService;
 
-        public ServicesController(ApplicationDbContext context)
+        public ServicesController(IServiceService serviceService)
         {
-            _context = context;
+            _serviceService = serviceService;
         }
 
         // GET: Admin/Services
         public async Task<IActionResult> Index()
         {
-            var services = await _context.Services
-                .Include(s => s.Appointments)
-                .OrderByDescending(s => s.CreatedDate)
-                .ToListAsync();
-
+            var filter   = new ServiceFilterViewModel { PageSize = 100 };
+            var services = await _serviceService.GetServicesAsync(filter);
             return View(services);
         }
 
@@ -40,21 +35,9 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ServiceViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            if (!ModelState.IsValid) return View(model);
 
-            var service = new Service
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Price = model.Price,
-                DurationDays = model.DurationDays,
-                IsActive = model.IsActive,
-                CreatedDate = DateTime.Now
-            };
-
-            _context.Add(service);
-            await _context.SaveChangesAsync();
+            var service = await _serviceService.CreateAsync(model);
             TempData["SuccessMessage"] = $"Услугата \"{service.Name}\" е създадена успешно!";
             return RedirectToAction(nameof(Index));
         }
@@ -64,17 +47,17 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         {
             if (id == null) return NotFound();
 
-            var service = await _context.Services.FindAsync(id);
+            var service = await _serviceService.GetByIdAsync(id.Value);
             if (service == null) return NotFound();
 
             var model = new ServiceViewModel
             {
-                Id = service.Id,
-                Name = service.Name,
-                Description = service.Description,
-                Price = service.Price,
+                Id           = service.Id,
+                Name         = service.Name,
+                Description  = service.Description,
+                Price        = service.Price,
                 DurationDays = service.DurationDays,
-                IsActive = service.IsActive
+                IsActive     = service.IsActive
             };
 
             return View(model);
@@ -86,21 +69,12 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id, ServiceViewModel model)
         {
             if (id != model.Id) return NotFound();
+            if (!ModelState.IsValid) return View(model);
 
-            if (!ModelState.IsValid)
-                return View(model);
+            var updated = await _serviceService.UpdateAsync(id, model);
+            if (!updated) return NotFound();
 
-            var service = await _context.Services.FindAsync(id);
-            if (service == null) return NotFound();
-
-            service.Name = model.Name;
-            service.Description = model.Description;
-            service.Price = model.Price;
-            service.DurationDays = model.DurationDays;
-            service.IsActive = model.IsActive;
-
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = $"Услугата \"{service.Name}\" е обновена успешно!";
+            TempData["SuccessMessage"] = $"Услугата \"{model.Name}\" е обновена успешно!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -109,10 +83,7 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         {
             if (id == null) return NotFound();
 
-            var service = await _context.Services
-                .Include(s => s.Appointments)
-                .FirstOrDefaultAsync(s => s.Id == id);
-
+            var service = await _serviceService.GetByIdAsync(id.Value);
             if (service == null) return NotFound();
 
             return View(service);
@@ -123,21 +94,17 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var service = await _context.Services
-                .Include(s => s.Appointments)
-                .FirstOrDefaultAsync(s => s.Id == id);
+            var service = await _serviceService.GetByIdAsync(id);
+            var name    = service?.Name ?? "Услугата";
 
-            if (service == null) return NotFound();
-
-            if (service.Appointments.Any())
+            var deleted = await _serviceService.DeleteAsync(id);
+            if (!deleted)
             {
-                TempData["ErrorMessage"] = "Не може да изтриете услуга, която има свързани записвания!";
+                TempData["ErrorMessage"] = "Не може да изтриете услуга с свързани записвания!";
                 return RedirectToAction(nameof(Index));
             }
 
-            _context.Services.Remove(service);
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = $"Услугата \"{service.Name}\" е изтрита успешно!";
+            TempData["SuccessMessage"] = $"\"{name}\" е изтрита успешно!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -146,14 +113,10 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleActive(int id)
         {
-            var service = await _context.Services.FindAsync(id);
-            if (service == null) return NotFound();
+            var toggled = await _serviceService.ToggleActiveAsync(id);
+            if (!toggled) return NotFound();
 
-            service.IsActive = !service.IsActive;
-            await _context.SaveChangesAsync();
-
-            var status = service.IsActive ? "активирана" : "деактивирана";
-            TempData["SuccessMessage"] = $"Услугата \"{service.Name}\" е {status}.";
+            TempData["SuccessMessage"] = "Статусът на услугата е променен.";
             return RedirectToAction(nameof(Index));
         }
     }
