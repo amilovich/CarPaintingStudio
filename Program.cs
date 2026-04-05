@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using CarPaintingStudio.Data;
 using CarPaintingStudio.Models;
+using CarPaintingStudio.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,11 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
+
+// ── Регистрация на Services (Dependency Injection) ──────────────────────────
+builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 // Add runtime compilation for development
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
