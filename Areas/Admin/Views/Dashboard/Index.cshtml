@@ -4,59 +4,100 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-@* Статистически карти *@
+@* Статистически карти — ред 1 *@
 <div class="row g-3 mb-4">
-    <div class="col-md-4 col-lg-2">
+    <div class="col-md-3">
         <div class="card stat-card blue shadow-sm h-100">
             <div class="card-body text-center py-3">
                 <i class="fas fa-tools fa-2x text-primary mb-2"></i>
                 <h3 class="fw-bold mb-0">@ViewBag.TotalServices</h3>
                 <small class="text-muted">Общо услуги</small>
+                <div class="mt-1">
+                    <span class="badge bg-success">@ViewBag.ActiveServices активни</span>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="card stat-card green shadow-sm h-100">
-            <div class="card-body text-center py-3">
-                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-                <h3 class="fw-bold mb-0">@ViewBag.ActiveServices</h3>
-                <small class="text-muted">Активни услуги</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 col-lg-2">
+    <div class="col-md-3">
         <div class="card stat-card orange shadow-sm h-100">
             <div class="card-body text-center py-3">
                 <i class="fas fa-calendar-check fa-2x text-warning mb-2"></i>
                 <h3 class="fw-bold mb-0">@ViewBag.TotalAppointments</h3>
                 <small class="text-muted">Записвания</small>
+                <div class="mt-1">
+                    <span class="badge bg-warning text-dark">@ViewBag.PendingAppointments чакащи</span>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="card stat-card red shadow-sm h-100">
-            <div class="card-body text-center py-3">
-                <i class="fas fa-clock fa-2x text-danger mb-2"></i>
-                <h3 class="fw-bold mb-0">@ViewBag.PendingAppointments</h3>
-                <small class="text-muted">Чакащи</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 col-lg-2">
+    <div class="col-md-3">
         <div class="card stat-card purple shadow-sm h-100">
             <div class="card-body text-center py-3">
-                <i class="fas fa-users fa-2x text-purple mb-2" style="color:#9b59b6"></i>
-                <h3 class="fw-bold mb-0">@ViewBag.TotalEmployees</h3>
-                <small class="text-muted">Служители</small>
+                <i class="fas fa-star fa-2x mb-2" style="color:#9b59b6"></i>
+                <h3 class="fw-bold mb-0">@ViewBag.TotalReviews</h3>
+                <small class="text-muted">Отзива</small>
+                <div class="mt-1">
+                    @if ((int)ViewBag.PendingReviews > 0)
+                    {
+                        <span class="badge bg-danger">@ViewBag.PendingReviews за одобрение</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Всички одобрени</span>
+                    }
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="card stat-card teal shadow-sm h-100">
+    <div class="col-md-3">
+        <div class="card stat-card green shadow-sm h-100">
             <div class="card-body text-center py-3">
-                <i class="fas fa-images fa-2x mb-2" style="color:#1abc9c"></i>
-                <h3 class="fw-bold mb-0">@ViewBag.TotalGalleryItems</h3>
-                <small class="text-muted">Галерия</small>
+                <i class="fas fa-money-bill-wave fa-2x text-success mb-2"></i>
+                <h3 class="fw-bold mb-0">@ViewBag.CompletedRevenue.ToString("F0") лв.</h3>
+                <small class="text-muted">Приходи (завършени)</small>
+                <div class="mt-1">
+                    <span class="badge bg-info text-dark">@ViewBag.TotalUsers потребители</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Статус на записванията (AJAX обновяван) *@
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold">
+                    <i class="fas fa-chart-pie me-2 text-primary"></i>Статус на записванията
+                </span>
+                <button class="btn btn-sm btn-outline-secondary" id="refreshStats">
+                    <i class="fas fa-sync-alt me-1"></i>Обнови
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 text-center" id="statsRow">
+                    <div class="col">
+                        <div class="fw-bold fs-4 text-warning" id="stat-pending">@ViewBag.PendingAppointments</div>
+                        <small class="text-muted">Чакащи</small>
+                    </div>
+                    <div class="col">
+                        <div class="fw-bold fs-4 text-info" id="stat-confirmed">—</div>
+                        <small class="text-muted">Потвърдени</small>
+                    </div>
+                    <div class="col">
+                        <div class="fw-bold fs-4 text-primary" id="stat-inprogress">—</div>
+                        <small class="text-muted">В процес</small>
+                    </div>
+                    <div class="col">
+                        <div class="fw-bold fs-4 text-success" id="stat-completed">—</div>
+                        <small class="text-muted">Завършени</small>
+                    </div>
+                    <div class="col">
+                        <div class="fw-bold fs-4 text-danger" id="stat-cancelled">—</div>
+                        <small class="text-muted">Отказани</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -70,13 +111,24 @@
                 <i class="fas fa-bolt me-2 text-warning"></i>Бързи действия
             </div>
             <div class="card-body d-flex flex-wrap gap-2">
-                <a asp-area="Admin" asp-controller="Services" asp-action="Create" class="btn btn-primary">
+                <a asp-area="Admin" asp-controller="Services" asp-action="Create"
+                   class="btn btn-primary">
                     <i class="fas fa-plus me-1"></i>Нова услуга
                 </a>
-                <a asp-area="Admin" asp-controller="Appointments" asp-action="Index" class="btn btn-outline-warning">
+                <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+                   class="btn btn-outline-warning">
                     <i class="fas fa-calendar-check me-1"></i>Записвания
                 </a>
-                <a asp-area="" asp-controller="Gallery" asp-action="Index" class="btn btn-outline-secondary">
+                <a asp-area="Admin" asp-controller="Reviews" asp-action="Index"
+                   class="btn btn-outline-purple" style="border-color:#9b59b6;color:#9b59b6">
+                    <i class="fas fa-star me-1"></i>Отзиви
+                    @if ((int)ViewBag.PendingReviews > 0)
+                    {
+                        <span class="badge bg-danger ms-1">@ViewBag.PendingReviews</span>
+                    }
+                </a>
+                <a asp-area="" asp-controller="Gallery" asp-action="Index"
+                   class="btn btn-outline-secondary">
                     <i class="fas fa-images me-1"></i>Галерия
                 </a>
             </div>
@@ -87,8 +139,11 @@
 @* Последни записвания *@
 <div class="card shadow-sm">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <span class="fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i>Последни записвания</span>
-        <a asp-area="Admin" asp-controller="Appointments" asp-action="Index" class="btn btn-sm btn-outline-primary">
+        <span class="fw-bold">
+            <i class="fas fa-calendar-alt me-2 text-primary"></i>Последни записвания
+        </span>
+        <a asp-area="Admin" asp-controller="Appointments" asp-action="Index"
+           class="btn btn-sm btn-outline-primary">
             Всички <i class="fas fa-arrow-right ms-1"></i>
         </a>
     </div>
@@ -108,6 +163,7 @@
                             <th>Услуга</th>
                             <th>Дата</th>
                             <th>Статус</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,8 +185,24 @@
                                             CarPaintingStudio.Models.AppointmentStatus.Cancelled  => "bg-danger",
                                             _ => "bg-secondary"
                                         };
+                                        var label = a.Status switch
+                                        {
+                                            CarPaintingStudio.Models.AppointmentStatus.Pending    => "Чакащ",
+                                            CarPaintingStudio.Models.AppointmentStatus.Confirmed  => "Потвърден",
+                                            CarPaintingStudio.Models.AppointmentStatus.InProgress => "В процес",
+                                            CarPaintingStudio.Models.AppointmentStatus.Completed  => "Завършен",
+                                            CarPaintingStudio.Models.AppointmentStatus.Cancelled  => "Отказан",
+                                            _ => "Неизвестен"
+                                        };
                                     }
-                                    <span class="badge @badgeClass">@a.Status</span>
+                                    <span class="badge @badgeClass">@label</span>
+                                </td>
+                                <td>
+                                    <a asp-area="Admin" asp-controller="Appointments"
+                                       asp-action="Details" asp-route-id="@a.Id"
+                                       class="btn btn-xs btn-outline-info" style="font-size:0.75rem">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                 </td>
                             </tr>
                         }
@@ -140,3 +212,32 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // AJAX зареждане на статистика
+        function loadStats() {
+            fetch('/Admin/Dashboard/GetStats')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('stat-pending').textContent    = data.pendingCount;
+                    document.getElementById('stat-confirmed').textContent  = data.confirmedCount;
+                    document.getElementById('stat-inprogress').textContent = data.inProgressCount;
+                    document.getElementById('stat-completed').textContent  = data.completedCount;
+                    document.getElementById('stat-cancelled').textContent  = data.cancelledCount;
+                })
+                .catch(() => {});
+        }
+
+        document.getElementById('refreshStats').addEventListener('click', function () {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Зарежда...';
+            loadStats();
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Обнови';
+            }, 800);
+        });
+
+        // Зареждане при страницата
+        loadStats();
+    </script>
+}
