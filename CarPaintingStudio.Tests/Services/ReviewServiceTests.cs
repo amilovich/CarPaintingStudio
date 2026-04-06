@@ -16,11 +16,14 @@ namespace CarPaintingStudio.Tests.Services
             return (new ReviewService(context), approvedId, pendingId);
         }
 
+        // Помощен метод за празен филтър
+        private static ReviewFilterViewModel EmptyFilter() => new ReviewFilterViewModel();
+
         [Fact]
         public async Task GetApprovedReviewsAsync_ReturnsOnlyApprovedReviews()
         {
             var (svc, _, _) = Create();
-            var result = await svc.GetApprovedReviewsAsync();
+            var result = await svc.GetApprovedReviewsAsync(EmptyFilter());
             Assert.All(result, r => Assert.True(r.IsApproved));
         }
 
@@ -28,15 +31,15 @@ namespace CarPaintingStudio.Tests.Services
         public async Task GetApprovedReviewsAsync_ReturnsCorrectCount()
         {
             var (svc, _, _) = Create();
-            var result = await svc.GetApprovedReviewsAsync();
-            Assert.Equal(2, result.Count());
+            var result = await svc.GetApprovedReviewsAsync(EmptyFilter());
+            Assert.Equal(2, result.TotalCount);
         }
 
         [Fact]
         public async Task GetApprovedReviewsAsync_OrderedByDateDescending()
         {
             var (svc, _, _) = Create();
-            var result = (await svc.GetApprovedReviewsAsync()).ToList();
+            var result = (await svc.GetApprovedReviewsAsync(EmptyFilter())).ToList();
             Assert.True(result[0].CreatedDate >= result[1].CreatedDate);
         }
 
