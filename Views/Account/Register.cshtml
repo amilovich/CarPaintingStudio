@@ -6,56 +6,151 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Регистрация</h4>
-                </div>
+
+            @* Заглавие *@
+            <div class="text-center mb-4">
+                <i class="fas fa-user-plus fa-3x text-primary mb-3 d-block"></i>
+                <h3 class="fw-bold">Създайте акаунт</h3>
+                <p class="text-muted">Регистрирайте се и управлявайте своите записвания</p>
+            </div>
+
+            <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <form asp-action="Register" method="post">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
 
                         <div class="mb-3">
-                            <label asp-for="FullName" class="form-label fw-semibold"></label>
-                            <input asp-for="FullName" class="form-control" placeholder="Иван Иванов" />
+                            <label asp-for="FullName" class="form-label fw-semibold">
+                                <i class="fas fa-user text-muted me-1"></i>Пълно име
+                            </label>
+                            <input asp-for="FullName" class="form-control form-control-lg"
+                                   placeholder="Иван Иванов" autocomplete="name" />
                             <span asp-validation-for="FullName" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold"></label>
-                            <input asp-for="Email" class="form-control" placeholder="example@email.com" />
+                            <label asp-for="Email" class="form-label fw-semibold">
+                                <i class="fas fa-envelope text-muted me-1"></i>Имейл адрес
+                            </label>
+                            <input asp-for="Email" class="form-control form-control-lg"
+                                   placeholder="example@email.com" autocomplete="email" />
                             <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Password" class="form-label fw-semibold"></label>
-                            <input asp-for="Password" class="form-control" placeholder="Минимум 6 символа" />
+                            <label asp-for="Password" class="form-label fw-semibold">
+                                <i class="fas fa-lock text-muted me-1"></i>Парола
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="Password" class="form-control form-control-lg"
+                                       placeholder="Минимум 6 символа" id="passwordInput"
+                                       autocomplete="new-password" />
+                                <button class="btn btn-outline-secondary" type="button"
+                                        id="togglePassword" tabindex="-1">
+                                    <i class="fas fa-eye" id="toggleIcon"></i>
+                                </button>
+                            </div>
                             <span asp-validation-for="Password" class="text-danger small"></span>
+                            @* Индикатор за сила на паролата *@
+                            <div class="progress mt-1" style="height: 4px;">
+                                <div class="progress-bar" id="passwordStrength" role="progressbar"
+                                     style="width: 0%"></div>
+                            </div>
+                            <small class="text-muted" id="strengthLabel"></small>
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="ConfirmPassword" class="form-label fw-semibold"></label>
-                            <input asp-for="ConfirmPassword" class="form-control" placeholder="Повтори паролата" />
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">
+                                <i class="fas fa-lock text-muted me-1"></i>Потвърди паролата
+                            </label>
+                            <input asp-for="ConfirmPassword" class="form-control form-control-lg"
+                                   placeholder="Повтори паролата" autocomplete="new-password" />
                             <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                         </div>
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg fw-semibold">
                                 <i class="fas fa-user-plus me-2"></i>Регистрирай се
                             </button>
                         </div>
                     </form>
 
-                    <hr />
-                    <p class="text-center mb-0">
-                        Вече имаш акаунт?
-                        <a asp-action="Login" class="text-primary fw-semibold">Влез тук</a>
+                    <hr class="my-3" />
+
+                    <p class="text-center mb-0 small">
+                        Вече имате акаунт?
+                        <a asp-action="Login" class="fw-semibold text-primary">Влезте тук</a>
                     </p>
                 </div>
             </div>
+
+            @* Предимства *@
+            <div class="card border-0 bg-light mt-3">
+                <div class="card-body py-3 px-3">
+                    <small class="text-muted fw-semibold d-block mb-2">
+                        <i class="fas fa-gift text-primary me-1"></i>С акаунт можете да:
+                    </small>
+                    <ul class="list-unstyled mb-0 small text-muted">
+                        <li><i class="fas fa-check text-success me-2"></i>Следите статуса на записванията си</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Оставяте отзиви за услугите</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Получавате персонализирани оферти</li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        // Показване/скриване на паролата
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const input = document.getElementById('passwordInput');
+            const icon  = document.getElementById('toggleIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+
+        // Индикатор за сила на паролата
+        const pwInput   = document.getElementById('passwordInput');
+        const bar       = document.getElementById('passwordStrength');
+        const label     = document.getElementById('strengthLabel');
+
+        pwInput.addEventListener('input', function () {
+            const val = this.value;
+            let strength = 0;
+            if (val.length >= 6)  strength++;
+            if (val.length >= 10) strength++;
+            if (/[A-Z]/.test(val)) strength++;
+            if (/[0-9]/.test(val)) strength++;
+            if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+            const pct = (strength / 5) * 100;
+            bar.style.width = pct + '%';
+
+            if (strength <= 1) {
+                bar.className = 'progress-bar bg-danger';
+                label.textContent = 'Слаба парола';
+            } else if (strength <= 3) {
+                bar.className = 'progress-bar bg-warning';
+                label.textContent = 'Средна парола';
+            } else {
+                bar.className = 'progress-bar bg-success';
+                label.textContent = 'Силна парола';
+            }
+
+            if (!val) {
+                bar.style.width = '0%';
+                label.textContent = '';
+            }
+        });
+    </script>
 }
