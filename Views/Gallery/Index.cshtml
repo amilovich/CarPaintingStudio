@@ -3,139 +3,148 @@
     ViewData["Title"] = "Галерия";
 }
 
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-md-12 text-center">
-            <h1>
-                <i class="fas fa-images"></i> Нашите проекти
-            </h1>
-            <p class="lead">Вижте трансформацията на автомобилите, които сме боядисали</p>
-        </div>
-    </div>
+<div class="container mt-4">
 
-    <!-- View Options -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <h5 class="mb-0">
-                                <i class="fas fa-sliders-h"></i> Опции за изглед
-                            </h5>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-outline-primary active" onclick="setGridView(3)" title="3 колони">
-                                    <i class="fas fa-th"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-primary" onclick="setGridView(4)" title="4 колони">
-                                    <i class="fas fa-th-large"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-primary" onclick="setGridView(2)" title="2 колони">
-                                    <i class="fas fa-grip-vertical"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    @* Заглавие *@
+    <div class="text-center mb-5">
+        <h2 class="fw-bold"><i class="fas fa-images text-primary me-2"></i>Нашите проекти</h2>
+        <p class="lead text-muted">Вижте трансформацията на автомобилите, с които работихме</p>
+        @if (Model.Any())
+        {
+            <span class="badge bg-primary px-3 py-2">@Model.Count() завършени проекта</span>
+        }
     </div>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info text-center">
-            <i class="fas fa-info-circle"></i> Галерията все още е празна. Скоро ще добавим нашите проекти.
+        <div class="text-center py-5">
+            <i class="fas fa-image fa-4x text-muted mb-3 d-block"></i>
+            <h5 class="text-muted">Галерията все още е празна.</h5>
+            <p class="text-muted">Скоро ще добавим нашите проекти.</p>
         </div>
     }
     else
     {
-        <div class="row">
+        @* Контроли за изглед *@
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <small class="text-muted">
+                Показани <strong>@Model.Count()</strong> проекта
+            </small>
+            <div class="btn-group btn-group-sm" role="group" aria-label="Изглед">
+                <button type="button" class="btn btn-outline-secondary" onclick="setGrid(2)" title="2 колони">
+                    <i class="fas fa-grip-vertical"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary active" onclick="setGrid(3)" title="3 колони">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="setGrid(4)" title="4 колони">
+                    <i class="fas fa-th-large"></i>
+                </button>
+            </div>
+        </div>
+
+        @* Галерия *@
+        <div class="row g-4" id="galleryGrid">
             @foreach (var item in Model)
             {
-                <div class="gallery-item col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        @if (!string.IsNullOrEmpty(item.AfterImageUrl))
-                        {
-                            <img src="@item.AfterImageUrl" class="card-img-top gallery-img" alt="@item.Title">
-                        }
-                        else
-                        {
-                            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="fas fa-image fa-3x text-white"></i>
-                            </div>
-                        }
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <i class="fas fa-award text-warning"></i> @item.Title
-                            </h5>
-                            <p class="card-text">@item.Description</p>
-                            <hr>
-                            <p class="mb-2">
-                                <i class="fas fa-car text-primary"></i>
-                                <strong>Автомобил:</strong> @item.CarBrand @item.CarModel
-                            </p>
-                            <p class="mb-2">
-                                <i class="fas fa-calendar-check text-success"></i>
-                                <strong>Завършен:</strong> @item.CompletedDate.ToString("dd.MM.yyyy")
-                            </p>
-                        </div>
-                        <div class="card-footer bg-white">
-                            @if (!string.IsNullOrEmpty(item.BeforeImageUrl) && !string.IsNullOrEmpty(item.AfterImageUrl))
+                <div class="col-md-4 gallery-item">
+                    <div class="card h-100 shadow-sm border-0">
+                        @* Снимка *@
+                        <div class="position-relative overflow-hidden" style="height: 220px;">
+                            @if (!string.IsNullOrEmpty(item.AfterImageUrl))
                             {
-                                <button class="btn btn-sm btn-outline-primary w-100" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#modal-@item.Id">
-                                    <i class="fas fa-eye"></i> Преди/След
-                                </button>
+                                <img src="@item.AfterImageUrl" alt="@item.Title"
+                                     class="w-100 h-100 object-fit-cover gallery-img"
+                                     style="object-fit: cover; transition: transform 0.3s;" />
+                            }
+                            else
+                            {
+                                <div class="w-100 h-100 bg-secondary d-flex align-items-center
+                                            justify-content-center">
+                                    <i class="fas fa-car fa-3x text-white opacity-50"></i>
+                                </div>
+                            }
+                            @* Overlay badge *@
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="fas fa-calendar me-1"></i>@item.CompletedDate.ToString("MM.yyyy")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="fw-bold mb-1">
+                                <i class="fas fa-award text-warning me-1"></i>@item.Title
+                            </h5>
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-car text-primary me-1"></i>
+                                @item.CarBrand @item.CarModel
+                            </p>
+                            @if (!string.IsNullOrEmpty(item.Description))
+                            {
+                                <p class="small text-muted mb-0">
+                                    @(item.Description.Length > 80 ? item.Description[..80] + "…" : item.Description)
+                                </p>
                             }
                         </div>
+
+                        @if (!string.IsNullOrEmpty(item.BeforeImageUrl) && !string.IsNullOrEmpty(item.AfterImageUrl))
+                        {
+                            <div class="card-footer bg-white border-top-0 pt-0">
+                                <button class="btn btn-outline-primary btn-sm w-100"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modal-@item.Id">
+                                    <i class="fas fa-exchange-alt me-1"></i>Преди / След
+                                </button>
+                            </div>
+                        }
                     </div>
                 </div>
 
-                <!-- Modal for Before/After comparison -->
+                @* Modal Преди/След *@
                 @if (!string.IsNullOrEmpty(item.BeforeImageUrl) && !string.IsNullOrEmpty(item.AfterImageUrl))
                 {
-                    <div class="modal fade" id="modal-@item.Id" tabindex="-1" aria-labelledby="modalLabel-@item.Id" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modalLabel-@item.Id">
-                                        <i class="fas fa-images"></i> @item.Title - Преди и След
+                    <div class="modal fade" id="modal-@item.Id" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-dark text-white">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-images me-2"></i>@item.Title
                                     </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="row">
+                                <div class="modal-body p-4">
+                                    <div class="row g-3">
                                         <div class="col-md-6 text-center">
-                                            <h6 class="text-danger">
-                                                <i class="fas fa-arrow-left"></i> Преди
-                                            </h6>
-                                            <img src="@item.BeforeImageUrl" class="img-fluid rounded" alt="Преди">
+                                            <div class="badge bg-danger mb-2 px-3 py-2">
+                                                <i class="fas fa-times me-1"></i>Преди
+                                            </div>
+                                            <img src="@item.BeforeImageUrl" class="img-fluid rounded shadow-sm"
+                                                 alt="Преди" />
                                         </div>
                                         <div class="col-md-6 text-center">
-                                            <h6 class="text-success">
-                                                След <i class="fas fa-arrow-right"></i>
-                                            </h6>
-                                            <img src="@item.AfterImageUrl" class="img-fluid rounded" alt="След">
+                                            <div class="badge bg-success mb-2 px-3 py-2">
+                                                <i class="fas fa-check me-1"></i>След
+                                            </div>
+                                            <img src="@item.AfterImageUrl" class="img-fluid rounded shadow-sm"
+                                                 alt="След" />
                                         </div>
                                     </div>
-                                    <hr>
-                                    <div class="text-center">
-                                        <p><strong>Описание:</strong> @item.Description</p>
-                                        <p>
-                                            <i class="fas fa-car"></i> <strong>Автомобил:</strong> @item.CarBrand @item.CarModel
-                                        </p>
-                                        <p>
-                                            <i class="fas fa-calendar"></i> <strong>Дата:</strong> @item.CompletedDate.ToString("dd MMMM yyyy")
-                                        </p>
+                                    <hr />
+                                    <div class="text-center text-muted small">
+                                        <i class="fas fa-car me-1"></i>@item.CarBrand @item.CarModel
+                                        &nbsp;|&nbsp;
+                                        <i class="fas fa-calendar me-1"></i>@item.CompletedDate.ToString("dd.MM.yyyy")
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                        <i class="fas fa-times"></i> Затвори
-                                    </button>
+                                    <a asp-controller="Appointments" asp-action="Create"
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fas fa-calendar-plus me-1"></i>Запиши час
+                                    </a>
+                                    <button type="button" class="btn btn-secondary btn-sm"
+                                            data-bs-dismiss="modal">Затвори</button>
                                 </div>
                             </div>
                         </div>
@@ -145,73 +154,46 @@
         </div>
     }
 
-    <!-- Call to action -->
-    <div class="row mt-5">
-        <div class="col-md-12">
-            <div class="card bg-primary text-white shadow">
-                <div class="card-body text-center py-5">
-                    <h3>
-                        <i class="fas fa-paint-roller"></i> Искате ли вашият автомобил да изглежда така?
-                    </h3>
-                    <p class="lead">Запишете час сега и се уверете в качеството на нашата работа!</p>
-                    <a asp-controller="Appointments" asp-action="Create" class="btn btn-light btn-lg">
-                        <i class="fas fa-calendar-plus"></i> Запази час
-                    </a>
-                </div>
-            </div>
+    @* CTA *@
+    <div class="card bg-dark text-white shadow-lg mt-5">
+        <div class="card-body text-center py-5">
+            <h4 class="fw-bold mb-3">
+                <i class="fas fa-paint-roller text-warning me-2"></i>
+                Искате вашият автомобил да изглежда така?
+            </h4>
+            <p class="lead mb-4 opacity-75">Запишете час и се уверете в качеството на нашата работа!</p>
+            <a asp-controller="Appointments" asp-action="Create" class="btn btn-warning btn-lg px-5">
+                <i class="fas fa-calendar-plus me-2"></i>Запиши час сега
+            </a>
         </div>
     </div>
+
 </div>
 
 @section Scripts {
     <script>
-        // Add animation to cards on scroll
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.card');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
-                    }
-                });
-            });
-
-            cards.forEach(card => {
-                observer.observe(card);
-            });
-        });
-
         // Grid view switcher
-        function setGridView(columns) {
-            const galleryItems = document.querySelectorAll('.gallery-item');
+        function setGrid(cols) {
+            const items   = document.querySelectorAll('.gallery-item');
             const buttons = document.querySelectorAll('.btn-group .btn');
-            
-            // Remove active class from all buttons
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // Add active class to clicked button
-            event.target.closest('button').classList.add('active');
-            
-            // Update grid classes
-            let colClass = '';
-            switch(columns) {
-                case 2:
-                    colClass = 'col-md-6';
-                    break;
-                case 3:
-                    colClass = 'col-md-4';
-                    break;
-                case 4:
-                    colClass = 'col-md-3';
-                    break;
-                default:
-                    colClass = 'col-md-4';
-            }
-            
-            galleryItems.forEach(item => {
-                item.className = 'gallery-item mb-4 ' + colClass;
+
+            buttons.forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            const colClass = cols === 2 ? 'col-md-6' : cols === 4 ? 'col-md-3' : 'col-md-4';
+            items.forEach(item => {
+                item.className = 'gallery-item ' + colClass;
             });
         }
+
+        // Hover zoom ефект
+        document.querySelectorAll('.gallery-img').forEach(img => {
+            img.closest('.card').addEventListener('mouseenter', () => {
+                img.style.transform = 'scale(1.05)';
+            });
+            img.closest('.card').addEventListener('mouseleave', () => {
+                img.style.transform = 'scale(1)';
+            });
+        });
     </script>
 }
