@@ -7,27 +7,34 @@
 @* Hero Section *@
 <div class="text-white text-center py-5 mb-5 rounded-3"
      style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);">
-    <div class="py-3">
-        <i class="fas fa-car fa-3x mb-3 text-warning d-block"></i>
-        <h1 class="display-4 fw-bold mb-3">CarPainting Studio</h1>
-        <p class="lead mb-2">Вашият партньор за професионално боядисване на автомобили</p>
-        <p class="text-muted mb-4">Над 15 години опит | Хиляди доволни клиенти</p>
+    <div class="py-4">
+        <i class="fas fa-paint-roller fa-3x mb-3 text-warning d-block"></i>
+        <h1 class="display-4 fw-bold mb-3" style="color:#fff!important">CarPainting Studio</h1>
+        <p class="lead mb-2" style="color:rgba(255,255,255,0.9)!important">
+            Вашият партньор за професионално боядисване на автомобили
+        </p>
+        <p class="mb-4" style="color:rgba(255,255,255,0.7)!important">
+            Над 15 години опит | Хиляди доволни клиенти
+        </p>
+
+        @* Статистики *@
         <div class="row justify-content-center mb-4">
-            <div class="col-auto px-4 border-end border-secondary">
+            <div class="col-auto px-4 border-end" style="border-color:rgba(255,255,255,0.3)!important">
                 <div class="fs-3 fw-bold text-warning">@ViewBag.CompletedJobs+</div>
-                <small class="text-muted">Завършени проекта</small>
+                <small style="color:rgba(255,255,255,0.75)">Завършени проекта</small>
             </div>
-            <div class="col-auto px-4 border-end border-secondary">
+            <div class="col-auto px-4 border-end" style="border-color:rgba(255,255,255,0.3)!important">
                 <div class="fs-3 fw-bold text-warning">@ViewBag.AvgRating &#x2605;</div>
-                <small class="text-muted">Средна оценка</small>
+                <small style="color:rgba(255,255,255,0.75)">Средна оценка</small>
             </div>
             <div class="col-auto px-4">
                 <div class="fs-3 fw-bold text-warning">15+</div>
-                <small class="text-muted">Години опит</small>
+                <small style="color:rgba(255,255,255,0.75)">Години опит</small>
             </div>
         </div>
+
         <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a class="btn btn-warning btn-lg px-4" asp-controller="Appointments" asp-action="Create">
+            <a class="btn btn-warning btn-lg px-4 fw-semibold" asp-controller="Appointments" asp-action="Create">
                 <i class="fas fa-calendar-plus me-2"></i>Запиши час сега
             </a>
             <a class="btn btn-outline-light btn-lg px-4" asp-controller="Services" asp-action="Index">
