@@ -1,262 +1,252 @@
 @model List<CarPaintingStudio.Models.Employee>
-
 @{
     ViewData["Title"] = "За нас";
 }
 
-<div class="container">
-    <!-- Company Info Section -->
-    <div class="row mb-5">
-        <div class="col-md-12">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h1 class="card-title text-center mb-4">
-                        <i class="fas fa-building"></i> За CarPainting Studio
-                    </h1>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p class="lead">
-                                CarPainting Studio е водеща компания в областта на автомобилното боядисване в България.
-                                С над 15 години опит, ние се гордеем с високото качество на нашата работа и 
-                                индивидуалния подход към всеки клиент.
-                            </p>
-                            <p>
-                                Нашата мисия е да предоставяме професионални услуги за боядисване на автомобили,
-                                използвайки най-съвременните технологии и материали. Ние вярваме, че всеки автомобил
-                                заслужава да изглежда като нов, независимо дали става въпрос за пълно боядисване
-                                или частичен ремонт.
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <h4><i class="fas fa-bullseye"></i> Нашите ценности:</h4>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    <i class="fas fa-check-circle text-success"></i> 
-                                    <strong>Качество:</strong> Използваме само висококачествени материали
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="fas fa-check-circle text-success"></i> 
-                                    <strong>Професионализъм:</strong> Опитен екип от майстори
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="fas fa-check-circle text-success"></i> 
-                                    <strong>Прецизност:</strong> Внимание към всеки детайл
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="fas fa-check-circle text-success"></i> 
-                                    <strong>Надеждност:</strong> Спазване на срокове и гаранция
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="container mt-4">
+
+    @* Hero секция *@
+    <div class="text-center py-5 mb-5 rounded-3"
+         style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);">
+        <i class="fas fa-building fa-3x text-warning mb-3 d-block"></i>
+        <h1 class="display-5 fw-bold text-white mb-3">За CarPainting Studio</h1>
+        <p class="lead text-white opacity-75 mb-0">
+            Вашият доверен партньор за професионално боядисване на автомобили
+        </p>
     </div>
 
-    <!-- Statistics Section -->
-    <div class="row mb-5 text-center">
-        <div class="col-md-3">
-            <div class="card border-primary shadow-sm">
-                <div class="card-body">
-                    <i class="fas fa-award fa-3x text-primary mb-3"></i>
-                    <h3 class="card-title">15+</h3>
-                    <p class="card-text">Години опит</p>
-                </div>
-            </div>
+    @* За компанията *@
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <h3 class="fw-bold mb-3">
+                <i class="fas fa-info-circle text-primary me-2"></i>Нашата история
+            </h3>
+            <p class="lead text-muted">
+                CarPainting Studio е водеща компания в областта на автомобилното боядисване в България.
+                С над <strong>15 години опит</strong>, ние се гордеем с високото качество на нашата работа
+                и индивидуалния подход към всеки клиент.
+            </p>
+            <p class="text-muted">
+                Нашата мисия е да предоставяме професионални услуги за боядисване на автомобили,
+                използвайки най-съвременните технологии и материали. Ние вярваме, че всеки автомобил
+                заслужава да изглежда като нов.
+            </p>
+            <a asp-controller="Appointments" asp-action="Create" class="btn btn-primary mt-2">
+                <i class="fas fa-calendar-plus me-2"></i>Запишете час
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card border-success shadow-sm">
-                <div class="card-body">
-                    <i class="fas fa-users fa-3x text-success mb-3"></i>
-                    <h3 class="card-title">5000+</h3>
-                    <p class="card-text">Доволни клиенти</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-warning shadow-sm">
-                <div class="card-body">
-                    <i class="fas fa-car fa-3x text-warning mb-3"></i>
-                    <h3 class="card-title">8000+</h3>
-                    <p class="card-text">Боядисани автомобила</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-info shadow-sm">
-                <div class="card-body">
-                    <i class="fas fa-star fa-3x text-info mb-3"></i>
-                    <h3 class="card-title">100%</h3>
-                    <p class="card-text">Гаранция качество</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Technology Section -->
-    <div class="row mb-5">
-        <div class="col-md-12">
-            <h2 class="text-center mb-4">
-                <i class="fas fa-cogs"></i> Технологии и оборудване
-            </h2>
-            <p class="text-center text-muted mb-5">Разполагаме с най-модерното оборудване за професионално боядисване</p>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                         style="width: 80px; height: 80px;">
-                        <i class="fas fa-spray-can fa-2x"></i>
-                    </div>
-                    <h5 class="card-title">Боядисваща камера</h5>
-                    <p class="card-text text-muted">
-                        Модерна боядисваща камера с контролирана температура и влажност за перфектно покритие
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                         style="width: 80px; height: 80px;">
-                        <i class="fas fa-microscope fa-2x"></i>
-                    </div>
-                    <h5 class="card-title">Спектрофотометър</h5>
-                    <p class="card-text text-muted">
-                        Прецизно определяне на цвета за идеално съвпадение с оригиналната боя
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                         style="width: 80px; height: 80px;">
-                        <i class="fas fa-wind fa-2x"></i>
-                    </div>
-                    <h5 class="card-title">Сушилна камера</h5>
-                    <p class="card-text text-muted">
-                        Професионална инфрачервена сушилня за бързо и качествено изсушаване
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Team Section -->
-    <div class="row mb-5">
-        <div class="col-md-12">
-            <h2 class="text-center mb-4">
-                <i class="fas fa-user-tie"></i> Нашият екип
-            </h2>
-        </div>
-        
-        @if (Model != null && Model.Any())
-        {
-            @foreach (var employee in Model)
-            {
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow h-100">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4 text-center">
-                                    @if (!string.IsNullOrEmpty(employee.PhotoUrl))
-                                    {
-                                        <img src="@employee.PhotoUrl" alt="@employee.FullName" class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
-                                    }
-                                    else
-                                    {
-                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
-                                             style="width: 120px; height: 120px;">
-                                            <i class="fas fa-user fa-3x"></i>
-                                        </div>
-                                    }
-                                </div>
-                                <div class="col-md-8">
-                                    <h4 class="card-title">
-                                        <i class="fas fa-user-circle text-primary"></i> @employee.FullName
-                                    </h4>
-                                    <h6 class="card-subtitle mb-2 text-muted">
-                                        <i class="fas fa-briefcase"></i> @employee.Position
-                                    </h6>
-                                    <p class="card-text mb-2">
-                                        <i class="fas fa-clock text-success"></i> 
-                                        <strong>Опит:</strong> @employee.YearsOfExperience години
-                                    </p>
-                                    <p class="card-text mb-2">
-                                        <i class="fas fa-envelope text-info"></i> 
-                                        <a href="mailto:@employee.Email">@employee.Email</a>
-                                    </p>
-                                    <p class="card-text mb-2">
-                                        <i class="fas fa-phone text-warning"></i> 
-                                        <a href="tel:@employee.Phone">@employee.Phone</a>
-                                    </p>
-                                    @if (!string.IsNullOrEmpty(employee.Bio))
-                                    {
-                                        <p class="card-text small text-muted mt-3">
-                                            <i class="fas fa-info-circle"></i> @employee.Bio
-                                        </p>
-                                    }
-                                </div>
+        <div class="col-md-6">
+            <h3 class="fw-bold mb-3">
+                <i class="fas fa-bullseye text-primary me-2"></i>Нашите ценности
+            </h3>
+            <div class="d-flex flex-column gap-3">
+                @{
+                    var values = new[]
+                    {
+                        ("fa-gem", "text-primary", "Качество", "Използваме само висококачествени материали и бои"),
+                        ("fa-user-tie", "text-success", "Професионализъм", "Опитен екип от сертифицирани майстори"),
+                        ("fa-magnifying-glass", "text-info", "Прецизност", "Внимание към всеки детайл от процеса"),
+                        ("fa-shield-alt", "text-warning", "Надеждност", "Спазваме срокове и даваме гаранция")
+                    };
+                }
+                @foreach (var (icon, color, title, desc) in values)
+                {
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                                 style="width:48px;height:48px">
+                                <i class="fas @icon @color"></i>
                             </div>
+                        </div>
+                        <div>
+                            <div class="fw-semibold">@title</div>
+                            <small class="text-muted">@desc</small>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Статистики *@
+    <div class="row g-3 mb-5 text-center">
+        @{
+            var stats = new[]
+            {
+                ("fa-award", "text-primary", "15+", "Години опит"),
+                ("fa-users", "text-success", "5000+", "Доволни клиенти"),
+                ("fa-car", "text-warning", "8000+", "Боядисани автомобила"),
+                ("fa-star", "text-info", "100%", "Гаранция качество")
+            };
+        }
+        @foreach (var (icon, color, number, label) in stats)
+        {
+            <div class="col-md-3 col-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body py-4">
+                        <i class="fas @icon fa-2x @color mb-3 d-block"></i>
+                        <h3 class="fw-bold mb-1">@number</h3>
+                        <small class="text-muted">@label</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @* Технологии и оборудване *@
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold"><i class="fas fa-cogs text-primary me-2"></i>Технологии и оборудване</h3>
+            <p class="text-muted">Разполагаме с най-модерното оборудване за професионално боядисване</p>
+        </div>
+        <div class="row g-4">
+            @{
+                var tech = new[]
+                {
+                    ("fa-spray-can", "bg-primary", "Боядисваща камера",
+                     "Модерна камера с контролирана температура и влажност за перфектно покритие"),
+                    ("fa-microscope", "bg-success", "Спектрофотометър",
+                     "Прецизно определяне на цвета за идеално съвпадение с оригиналната боя"),
+                    ("fa-wind", "bg-warning", "Сушилна камера",
+                     "Професионална инфрачервена сушилня за бързо и качествено изсушаване"),
+                    ("fa-paint-brush", "bg-info", "Пистолети SATA",
+                     "Немски пистолети за боядисване с перфектно разпръскване и минимален отпадък"),
+                    ("fa-shield-alt", "bg-danger", "Защитна кабина",
+                     "Херметична кабина за защита от прах и замърсяване при работа"),
+                    ("fa-computer", "bg-secondary", "Дигитална система",
+                     "Компютърна система за смесване на бои по оригиналните кодове")
+                };
+            }
+            @foreach (var (icon, bg, title, desc) in tech)
+            {
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="@bg text-white rounded-circle d-inline-flex align-items-center
+                                         justify-content-center mb-3" style="width:64px;height:64px">
+                                <i class="fas @icon fa-lg"></i>
+                            </div>
+                            <h5 class="fw-bold mb-2">@title</h5>
+                            <p class="text-muted small mb-0">@desc</p>
                         </div>
                     </div>
                 </div>
             }
+        </div>
+    </div>
+
+    @* Екипът *@
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold"><i class="fas fa-user-tie text-primary me-2"></i>Нашият екип</h3>
+            <p class="text-muted">Запознайте се с хората зад CarPainting Studio</p>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="row g-4">
+                @foreach (var employee in Model)
+                {
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex gap-4 align-items-start">
+                                    @* Снимка *@
+                                    @if (!string.IsNullOrEmpty(employee.PhotoUrl))
+                                    {
+                                        <img src="@employee.PhotoUrl" alt="@employee.FullName"
+                                             class="rounded-circle flex-shrink-0"
+                                             style="width:90px;height:90px;object-fit:cover" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-primary text-white rounded-circle d-flex
+                                                    align-items-center justify-content-center flex-shrink-0"
+                                             style="width:90px;height:90px">
+                                            <i class="fas fa-user fa-2x"></i>
+                                        </div>
+                                    }
+                                    @* Информация *@
+                                    <div>
+                                        <h5 class="fw-bold mb-1">@employee.FullName</h5>
+                                        <span class="badge bg-primary mb-2">@employee.Position</span>
+                                        <div class="text-muted small mb-1">
+                                            <i class="fas fa-clock me-1"></i>
+                                            <strong>@employee.YearsOfExperience год.</strong> опит
+                                        </div>
+                                        <div class="small mb-1">
+                                            <a href="mailto:@employee.Email" class="text-muted text-decoration-none">
+                                                <i class="fas fa-envelope me-1"></i>@employee.Email
+                                            </a>
+                                        </div>
+                                        <div class="small">
+                                            <a href="tel:@employee.Phone" class="text-muted text-decoration-none">
+                                                <i class="fas fa-phone me-1"></i>@employee.Phone
+                                            </a>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(employee.Bio))
+                                        {
+                                            <p class="text-muted small mt-2 mb-0 fst-italic">@employee.Bio</p>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         }
         else
         {
-            <div class="col-md-12">
-                <div class="alert alert-info text-center">
-                    <i class="fas fa-info-circle"></i> Информация за екипа скоро ще бъде добавена.
-                </div>
+            <div class="text-center text-muted py-4">
+                <i class="fas fa-users fa-3x mb-3 d-block"></i>
+                Информация за екипа скоро ще бъде добавена.
             </div>
         }
     </div>
 
-    <!-- Contact Section -->
-    <div class="row mb-5">
-        <div class="col-md-12">
-            <div class="card bg-dark text-white shadow">
-                <div class="card-body text-center py-5">
-                    <h3><i class="fas fa-map-marker-alt"></i> Посетете ни</h3>
-                    <p class="lead mb-4">Очакваме Ви в нашия офис и сервиз!</p>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <h5><i class="fas fa-location-dot"></i> Адрес</h5>
-                            <p>гр. София<br>бул. Цариградско шосе 100</p>
-                        </div>
-                        <div class="col-md-4">
-                            <h5><i class="fas fa-phone"></i> Телефон</h5>
-                            <p>
-                                <a href="tel:0888123456" class="text-white">0888 123 456</a>
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <h5><i class="fas fa-envelope"></i> Имейл</h5>
-                            <p>
-                                <a href="mailto:info@carpaint.bg" class="text-white">info@carpaint.bg</a>
-                            </p>
-                        </div>
-                    </div>
-                    <hr class="bg-white my-4">
-                    <h5><i class="fas fa-clock"></i> Работно време</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Понеделник - Петък:</strong> 08:00 - 18:00</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Събота:</strong> 09:00 - 14:00<br><strong>Неделя:</strong> Почивен ден</p>
-                        </div>
-                    </div>
-                    <a class="btn btn-light btn-lg mt-3" asp-controller="Appointments" asp-action="Create">
-                        <i class="fas fa-calendar-plus"></i> Запишете час
-                    </a>
+    @* Контакти и работно време *@
+    <div class="card bg-dark text-white shadow-lg mb-4">
+        <div class="card-body py-5">
+            <h4 class="fw-bold text-center mb-4">
+                <i class="fas fa-map-marker-alt text-warning me-2"></i>Посетете ни
+            </h4>
+            <div class="row text-center g-4">
+                <div class="col-md-4">
+                    <i class="fas fa-location-dot fa-2x text-warning mb-2 d-block"></i>
+                    <h6 class="fw-bold">Адрес</h6>
+                    <p class="text-white opacity-75 mb-0">
+                        гр. София<br>бул. Цариградско шосе 100
+                    </p>
                 </div>
+                <div class="col-md-4">
+                    <i class="fas fa-phone fa-2x text-warning mb-2 d-block"></i>
+                    <h6 class="fw-bold">Телефон и имейл</h6>
+                    <p class="mb-1">
+                        <a href="tel:0888123456" class="text-white text-decoration-none">0888 123 456</a>
+                    </p>
+                    <p class="mb-0">
+                        <a href="mailto:info@carpaint.bg" class="text-white opacity-75 text-decoration-none small">
+                            info@carpaint.bg
+                        </a>
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <i class="fas fa-clock fa-2x text-warning mb-2 d-block"></i>
+                    <h6 class="fw-bold">Работно време</h6>
+                    <p class="text-white opacity-75 small mb-0">
+                        Пон — Пет: 08:00 – 18:00<br>
+                        Събота: 09:00 – 14:00<br>
+                        Неделя: Почивен ден
+                    </p>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a asp-controller="Appointments" asp-action="Create" class="btn btn-warning btn-lg px-5">
+                    <i class="fas fa-calendar-plus me-2"></i>Запишете час сега
+                </a>
             </div>
         </div>
     </div>
+
 </div>
