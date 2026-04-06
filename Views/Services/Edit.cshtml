@@ -1,70 +1,94 @@
-@model ServiceViewModel
+@model CarPaintingStudio.ViewModels.ServiceViewModel
 @{
-    ViewData["Title"] = "Редактирай услуга";
+    ViewData["Title"] = "Редактиране на услуга";
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h1>
-                <i class="fas fa-edit"></i> Редактирай услуга
-            </h1>
-            <hr />
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
 
-            <form asp-action="Edit" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
+            <div class="text-center mb-4">
+                <i class="fas fa-edit fa-3x text-warning mb-3 d-block"></i>
+                <h3 class="fw-bold">Редактиране на услуга</h3>
+                <p class="text-muted">Актуализирайте данните за услугата</p>
+            </div>
 
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-warning bg-opacity-10 border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Редактирате: <strong>@Model.Name</strong>
+                    </small>
                 </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger small"></div>
 
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label"></label>
-                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="Price" class="form-label"></label>
-                        <div class="input-group">
-                            <input asp-for="Price" class="form-control" />
-                            <span class="input-group-text">лв</span>
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-semibold">
+                                <i class="fas fa-tag text-muted me-1"></i>Наименование
+                            </label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
-                        <span asp-validation-for="Price" class="text-danger"></span>
-                    </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="DurationDays" class="form-label"></label>
-                        <div class="input-group">
-                            <input asp-for="DurationDays" class="form-control" />
-                            <span class="input-group-text">дни</span>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold">
+                                <i class="fas fa-align-left text-muted me-1"></i>Описание
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
-                        <span asp-validation-for="DurationDays" class="text-danger"></span>
-                    </div>
-                </div>
 
-                <div class="mb-3 form-check">
-                    <input asp-for="IsActive" class="form-check-input" />
-                    <label asp-for="IsActive" class="form-check-label"></label>
-                </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Price" class="form-label fw-semibold">
+                                    <i class="fas fa-money-bill text-muted me-1"></i>Цена
+                                </label>
+                                <div class="input-group">
+                                    <input asp-for="Price" class="form-control" />
+                                    <span class="input-group-text fw-semibold text-success">лв.</span>
+                                </div>
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DurationDays" class="form-label fw-semibold">
+                                    <i class="fas fa-clock text-muted me-1"></i>Продължителност
+                                </label>
+                                <div class="input-group">
+                                    <input asp-for="DurationDays" class="form-control" />
+                                    <span class="input-group-text">дни</span>
+                                </div>
+                                <span asp-validation-for="DurationDays" class="text-danger small"></span>
+                            </div>
+                        </div>
 
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Запази промените
-                    </button>
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Отказ
-                    </a>
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsActive" class="form-check-input" role="switch" />
+                                <label asp-for="IsActive" class="form-check-label fw-semibold">
+                                    Активна услуга
+                                </label>
+                            </div>
+                            <small class="text-muted">Само активните услуги се показват на клиентите</small>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg flex-fill">
+                                <i class="fas fa-save me-2"></i>Запази промените
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-1"></i>Отказ
+                            </a>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

@@ -1,15 +1,16 @@
 @model CarPaintingStudio.Models.Review
 @{
-    ViewData["Title"] = "Отзив";
+    ViewData["Title"] = "Отзив от " + Model.AuthorName;
 }
 
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-7">
-            <div class="card shadow-sm border-0">
+
+            <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-5">
 
-                    @* Звезди *@
+                    @* Звезди и оценка *@
                     <div class="text-center mb-4">
                         <div class="mb-2">
                             @for (int i = 1; i <= 5; i++)
@@ -17,45 +18,92 @@
                                 <i class="fas fa-star fa-2x @(i <= Model.Rating ? "text-warning" : "text-muted")"></i>
                             }
                         </div>
-                        <span class="badge bg-warning text-dark fs-6">@Model.Rating / 5</span>
+                        <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                            @Model.Rating / 5 —
+                            @(Model.Rating switch {
+                                5 => "Отлично",
+                                4 => "Много добро",
+                                3 => "Добро",
+                                2 => "Задоволително",
+                                _ => "Лошо"
+                            })
+                        </span>
                     </div>
 
                     @* Съдържание *@
                     <blockquote class="blockquote text-center mb-4">
-                        <p class="fst-italic fs-5 text-dark">"@Model.Content"</p>
+                        <p class="fst-italic fs-5 text-dark lh-lg">"@Model.Content"</p>
                     </blockquote>
 
                     <hr />
 
-                    @* Автор *@
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="fw-bold fs-5">
-                                <i class="fas fa-user-circle text-primary me-2"></i>@Model.AuthorName
-                            </div>
-                            @if (Model.Service != null)
-                            {
-                                <div class="text-muted mt-1">
-                                    <i class="fas fa-tools me-2"></i>Услуга: <strong>@Model.Service.Name</strong>
+                    @* Автор и услуга *@
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center
+                                            justify-content-center flex-shrink-0"
+                                     style="width:48px;height:48px">
+                                    <i class="fas fa-user"></i>
                                 </div>
-                            }
+                                <div>
+                                    <div class="fw-bold fs-5">@Model.AuthorName</div>
+                                    @if (Model.Service != null)
+                                    {
+                                        <small class="text-muted">
+                                            <i class="fas fa-tools me-1"></i>@Model.Service.Name
+                                        </small>
+                                    }
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-end text-muted">
+                        <div class="col-auto text-muted small">
                             <i class="fas fa-calendar-alt me-1"></i>
-                            @Model.CreatedDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("bg-BG"))
+                            @Model.CreatedDate.ToString("dd.MM.yyyy")
                         </div>
-                    </div>
-
-                    <div class="mt-4 text-center">
-                        <a asp-action="Index" class="btn btn-outline-primary">
-                            <i class="fas fa-arrow-left me-2"></i>Всички отзиви
-                        </a>
-                        <a asp-action="Create" class="btn btn-primary ms-2">
-                            <i class="fas fa-pen me-2"></i>Напиши свой отзив
-                        </a>
                     </div>
                 </div>
             </div>
+
+            @* Свързана услуга *@
+            @if (Model.Service != null)
+            {
+                <div class="card border-0 bg-light mb-4">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block">Отзивът е за услуга:</small>
+                            <strong>@Model.Service.Name</strong>
+                            <span class="text-success ms-2 fw-bold">@Model.Service.Price.ToString("F0") лв.</span>
+                        </div>
+                        <a asp-controller="Services" asp-action="Details"
+                           asp-route-id="@Model.Service.Id"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-info-circle me-1"></i>Вижте услугата
+                        </a>
+                    </div>
+                </div>
+            }
+
+            @* Действия *@
+            <div class="d-flex gap-2 justify-content-center">
+                <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="fas fa-arrow-left me-2"></i>Всички отзиви
+                </a>
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <a asp-action="Create" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-pen me-2"></i>Напиши свой отзив
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Appointments" asp-action="Create"
+                       class="btn btn-warning btn-lg px-4">
+                        <i class="fas fa-calendar-plus me-2"></i>Запиши час
+                    </a>
+                }
+            </div>
+
         </div>
     </div>
 </div>
