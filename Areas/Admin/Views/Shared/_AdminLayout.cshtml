@@ -9,49 +9,77 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         body { background-color: #f4f6f9; }
+
         .admin-sidebar {
             min-height: 100vh;
             background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-            width: 250px;
+            width: 240px;
             position: fixed;
             top: 0; left: 0;
             z-index: 100;
-            padding-top: 20px;
-        }
-        .admin-sidebar .nav-link {
-            color: #adb5bd;
-            padding: 12px 20px;
-            border-radius: 0;
-            transition: all 0.2s;
-        }
-        .admin-sidebar .nav-link:hover,
-        .admin-sidebar .nav-link.active {
-            color: #fff;
-            background-color: rgba(255,255,255,0.1);
-            border-left: 3px solid #e74c3c;
+            overflow-y: auto;
         }
         .admin-sidebar .brand {
             color: #fff;
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 15px 20px 25px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 18px 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             text-decoration: none;
         }
+        .admin-sidebar .nav-section {
+            padding: 12px 20px 4px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.35);
+            font-weight: 600;
+        }
+        .admin-sidebar .nav-link {
+            color: rgba(255,255,255,0.65);
+            padding: 10px 20px;
+            border-left: 3px solid transparent;
+            border-radius: 0;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .admin-sidebar .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255,255,255,0.07);
+            border-left-color: rgba(255,255,255,0.3);
+        }
+        .admin-sidebar .nav-link.active {
+            color: #fff;
+            background-color: rgba(231,76,60,0.2);
+            border-left-color: #e74c3c;
+            font-weight: 600;
+        }
+        .admin-sidebar .nav-link .badge {
+            font-size: 0.65rem;
+        }
+
         .admin-content {
-            margin-left: 250px;
-            padding: 20px;
+            margin-left: 240px;
+            min-height: 100vh;
         }
         .admin-topbar {
             background: #fff;
-            padding: 12px 20px;
+            padding: 12px 24px;
             border-bottom: 1px solid #dee2e6;
-            margin: -20px -20px 20px -20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
+        .admin-main { padding: 24px; }
+
+        /* Stat cards */
         .stat-card { border-left: 4px solid; border-radius: 8px; }
         .stat-card.blue   { border-left-color: #3498db; }
         .stat-card.green  { border-left-color: #2ecc71; }
@@ -62,65 +90,115 @@
     </style>
 </head>
 <body>
+
     @* Sidebar *@
     <div class="admin-sidebar">
         <a class="brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-            <i class="fas fa-shield-alt me-2 text-danger"></i>CarPaint Admin
+            <i class="fas fa-shield-alt text-danger"></i>
+            <span>CarPaint Admin</span>
         </a>
-        <nav class="nav flex-column mt-2">
-            <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+
+        <nav class="nav flex-column pt-2">
+
+            @* Dashboard *@
+            <span class="nav-section">Главно меню</span>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+               asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
                 <i class="fas fa-tachometer-alt me-2"></i>Dashboard
             </a>
-            <a class="nav-link" asp-area="Admin" asp-controller="Services" asp-action="Index">
+
+            @* Управление *@
+            <span class="nav-section mt-2">Управление</span>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Services" ? "active" : "")"
+               asp-area="Admin" asp-controller="Services" asp-action="Index">
                 <i class="fas fa-tools me-2"></i>Услуги
             </a>
-            <a class="nav-link" asp-area="Admin" asp-controller="Appointments" asp-action="Index">
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Appointments" ? "active" : "")"
+               asp-area="Admin" asp-controller="Appointments" asp-action="Index">
                 <i class="fas fa-calendar-check me-2"></i>Записвания
             </a>
-            <a class="nav-link" asp-area="Admin" asp-controller="Reviews" asp-action="Index">
-                <i class="fas fa-star me-2"></i>Отзиви
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reviews" ? "active" : "")
+                      d-flex justify-content-between align-items-center"
+               asp-area="Admin" asp-controller="Reviews" asp-action="Index">
+                <span><i class="fas fa-star me-2"></i>Отзиви</span>
             </a>
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 20px;" />
+
+            @* Сайт *@
+            <hr style="border-color:rgba(255,255,255,0.08); margin:12px 16px;" />
+            <span class="nav-section">Публичен сайт</span>
             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                <i class="fas fa-external-link-alt me-2"></i>Към сайта
+                <i class="fas fa-home me-2"></i>Начална страница
+            </a>
+            <a class="nav-link" asp-area="" asp-controller="Services" asp-action="Index">
+                <i class="fas fa-external-link-alt me-2"></i>Услуги (публично)
+            </a>
+            <a class="nav-link" asp-area="" asp-controller="Gallery" asp-action="Index">
+                <i class="fas fa-images me-2"></i>Галерия
             </a>
         </nav>
+
+        @* Потребителска информация в дъното *@
+        <div style="position:absolute; bottom:0; left:0; right:0; padding:16px 20px;
+                    border-top:1px solid rgba(255,255,255,0.08);">
+            <div class="text-white opacity-75 small mb-2">
+                <i class="fas fa-user-shield me-1 text-danger"></i>
+                @User.Identity?.Name?.Split('@')[0]
+            </div>
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                    <i class="fas fa-sign-out-alt me-1"></i>Изход
+                </button>
+            </form>
+        </div>
     </div>
 
     @* Main content *@
     <div class="admin-content">
+
+        @* Top bar *@
         <div class="admin-topbar">
-            <h5 class="mb-0 fw-bold text-dark">@ViewData["Title"]</h5>
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-muted small">
-                    <i class="fas fa-user-shield me-1 text-danger"></i>@User.Identity?.Name
-                </span>
-                <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
-                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                        <i class="fas fa-sign-out-alt me-1"></i>Изход
-                    </button>
-                </form>
+            <div>
+                <h5 class="mb-0 fw-bold">@ViewData["Title"]</h5>
+                <small class="text-muted">
+                    <i class="fas fa-home me-1"></i>
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                       class="text-muted text-decoration-none">Admin</a>
+                    @if (ViewContext.RouteData.Values["controller"]?.ToString() != "Dashboard")
+                    {
+                        <span class="mx-1">/</span>
+                        <span>@ViewData["Title"]</span>
+                    }
+                </small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a asp-area="" asp-controller="Home" asp-action="Index"
+                   class="btn btn-sm btn-outline-secondary" target="_blank">
+                    <i class="fas fa-external-link-alt me-1"></i>Към сайта
+                </a>
             </div>
         </div>
 
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show">
-                <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show">
-                <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
+        @* Alerts *@
+        <div class="admin-main">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
 
-        <main>
-            @RenderBody()
-        </main>
+            <main>
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
