@@ -10,67 +10,110 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="fas fa-car"></i> CarPainting Studio
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <div class="container">
+
+                @* Brand *@
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-paint-roller text-warning me-2"></i>CarPainting Studio
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarMain" aria-controls="navbarMain"
+                        aria-expanded="false" aria-label="Навигация">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="navbar-collapse collapse" id="navbarMain">
+
+                    @* Основни линкове *@
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="fas fa-home"></i> Начало
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home me-1"></i>Начало
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Services" asp-action="Index">
-                                <i class="fas fa-tools"></i> Услуги
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Services" ? "active" : "")"
+                               asp-area="" asp-controller="Services" asp-action="Index">
+                                <i class="fas fa-tools me-1"></i>Услуги
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Appointments" asp-action="Create">
-                                <i class="fas fa-calendar-plus"></i> Запиши час
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Gallery" ? "active" : "")"
+                               asp-area="" asp-controller="Gallery" asp-action="Index">
+                                <i class="fas fa-images me-1"></i>Галерия
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Gallery" asp-action="Index">
-                                <i class="fas fa-images"></i> Галерия
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reviews" ? "active" : "")"
+                               asp-area="" asp-controller="Reviews" asp-action="Index">
+                                <i class="fas fa-star me-1"></i>Отзиви
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Reviews" asp-action="Index">
-                                <i class="fas fa-star"></i> Отзиви
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">
-                                <i class="fas fa-info-circle"></i> За нас
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="About">
+                                <i class="fas fa-info-circle me-1"></i>За нас
                             </a>
                         </li>
                     </ul>
 
-                    @* Auth навигация *@
-                    <ul class="navbar-nav ms-auto">
+                    @* Десни линкове *@
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+
+                        @* Запиши час — винаги видим *@
+                        <li class="nav-item">
+                            <a class="btn btn-warning btn-sm px-3 fw-semibold"
+                               asp-area="" asp-controller="Appointments" asp-action="Create">
+                                <i class="fas fa-calendar-plus me-1"></i>Запиши час
+                            </a>
+                        </li>
+
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
+                            @* Моите записвания *@
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Appointments" ? "active" : "")"
+                                   asp-area="" asp-controller="Appointments" asp-action="Index">
+                                    <i class="fas fa-calendar-check me-1"></i>Записвания
+                                </a>
+                            </li>
+
+                            @* Admin линк *@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-danger fw-semibold" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-                                        <i class="fas fa-shield-alt"></i> Администрация
+                                    <a class="nav-link text-warning fw-semibold
+                                       @(ViewContext.RouteData.Values["area"]?.ToString() == "Admin" ? "active" : "")"
+                                       asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                                        <i class="fas fa-shield-alt me-1"></i>Админ
                                     </a>
                                 </li>
                             }
+
+                            @* Потребителско меню *@
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                   data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user-circle"></i> @User.Identity.Name
+                                <a class="nav-link dropdown-toggle" href="#" id="userMenu"
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle me-1"></i>
+                                    @(User.Identity.Name?.Split('@')[0] ?? "Профил")
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                    <li>
+                                        <span class="dropdown-item-text text-muted small">
+                                            @User.Identity.Name
+                                        </span>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="Appointments" asp-action="Index">
+                                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Моите записвания
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
                                     <li>
                                         <form asp-controller="Account" asp-action="Logout" method="post">
                                             <button type="submit" class="dropdown-item text-danger">
@@ -85,12 +128,13 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Account" asp-action="Login">
-                                    <i class="fas fa-sign-in-alt"></i> Вход
+                                    <i class="fas fa-sign-in-alt me-1"></i>Вход
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link btn btn-primary text-white px-3 ms-1" asp-controller="Account" asp-action="Register">
-                                    <i class="fas fa-user-plus"></i> Регистрация
+                                <a class="btn btn-outline-light btn-sm px-3"
+                                   asp-controller="Account" asp-action="Register">
+                                    <i class="fas fa-user-plus me-1"></i>Регистрация
                                 </a>
                             </li>
                         }
@@ -99,87 +143,92 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <div class="container mt-3">
+        @* TempData alerts *@
         @if (TempData["SuccessMessage"] != null)
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
         @if (TempData["ErrorMessage"] != null)
         {
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-dark text-white mt-5">
+    @* Footer *@
+    <footer class="bg-dark text-white mt-5 border-top border-secondary">
         <div class="container py-4">
-            <div class="row">
+            <div class="row g-4">
                 <div class="col-md-3">
-                    <h5><i class="fas fa-car"></i> CarPainting Studio</h5>
-                    <p>Професионално боядисване на автомобили с внимание към детайла.</p>
-                    <div class="social-links mt-3">
-                        <a href="#" class="text-white me-3" title="Facebook"><i class="fab fa-facebook fa-2x"></i></a>
-                        <a href="#" class="text-white me-3" title="Instagram"><i class="fab fa-instagram fa-2x"></i></a>
-                        <a href="#" class="text-white me-3" title="YouTube"><i class="fab fa-youtube fa-2x"></i></a>
-                        <a href="#" class="text-white" title="LinkedIn"><i class="fab fa-linkedin fa-2x"></i></a>
+                    <h6 class="fw-bold text-warning mb-3">
+                        <i class="fas fa-paint-roller me-2"></i>CarPainting Studio
+                    </h6>
+                    <p class="text-white opacity-75 small">
+                        Професионално боядисване на автомобили с внимание към детайла и гаранция за качество.
+                    </p>
+                    <div class="d-flex gap-3 mt-2">
+                        <a href="#" class="text-white opacity-75 fs-5"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white opacity-75 fs-5"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white opacity-75 fs-5"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <h5><i class="fas fa-phone"></i> Контакти</h5>
-                    <p class="mb-2">
-                        <i class="fas fa-phone-alt"></i>
-                        <a href="tel:0888123456" class="text-white text-decoration-none">0888 123 456</a>
-                    </p>
-                    <p class="mb-2">
-                        <i class="fas fa-envelope"></i>
-                        <a href="mailto:info@carpaint.bg" class="text-white text-decoration-none">info@carpaint.bg</a>
-                    </p>
-                    <p class="mb-0">
-                        <i class="fas fa-map-marker-alt"></i> гр. София, бул. Цариградско шосе 100
-                    </p>
+                    <h6 class="fw-bold mb-3">Навигация</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a asp-controller="Home" asp-action="Index" class="text-white opacity-75 text-decoration-none small"><i class="fas fa-chevron-right me-1 small"></i>Начало</a></li>
+                        <li class="mb-1"><a asp-controller="Services" asp-action="Index" class="text-white opacity-75 text-decoration-none small"><i class="fas fa-chevron-right me-1 small"></i>Услуги</a></li>
+                        <li class="mb-1"><a asp-controller="Gallery" asp-action="Index" class="text-white opacity-75 text-decoration-none small"><i class="fas fa-chevron-right me-1 small"></i>Галерия</a></li>
+                        <li class="mb-1"><a asp-controller="Reviews" asp-action="Index" class="text-white opacity-75 text-decoration-none small"><i class="fas fa-chevron-right me-1 small"></i>Отзиви</a></li>
+                        <li class="mb-1"><a asp-controller="Home" asp-action="About" class="text-white opacity-75 text-decoration-none small"><i class="fas fa-chevron-right me-1 small"></i>За нас</a></li>
+                    </ul>
                 </div>
                 <div class="col-md-3">
-                    <h5><i class="fas fa-clock"></i> Работно време</h5>
-                    <p class="mb-1"><i class="fas fa-calendar-week"></i> Понеделник - Петък:</p>
-                    <p class="ms-4 mb-2">08:00 - 18:00</p>
-                    <p class="mb-1"><i class="fas fa-calendar-day"></i> Събота:</p>
-                    <p class="ms-4 mb-2">09:00 - 14:00</p>
-                    <p class="mb-1"><i class="fas fa-calendar-times"></i> Неделя:</p>
-                    <p class="ms-4 mb-0">Почивен ден</p>
+                    <h6 class="fw-bold mb-3">Контакти</h6>
+                    <ul class="list-unstyled small text-white opacity-75">
+                        <li class="mb-2">
+                            <i class="fas fa-map-marker-alt text-warning me-2"></i>
+                            гр. София, бул. Цариградско шосе 100
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-phone text-warning me-2"></i>
+                            <a href="tel:0888123456" class="text-white text-decoration-none">0888 123 456</a>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-envelope text-warning me-2"></i>
+                            <a href="mailto:info@carpaint.bg" class="text-white text-decoration-none">info@carpaint.bg</a>
+                        </li>
+                    </ul>
                 </div>
                 <div class="col-md-3">
-                    <h5><i class="fas fa-envelope-open-text"></i> Новини</h5>
-                    <p>Абонирайте се за нашите новини и оферти!</p>
-                    <form id="newsletterForm" class="newsletter-form">
-                        <div class="input-group mb-2">
-                            <input type="email" class="form-control" placeholder="Ваш имейл" required>
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                        <small class="text-muted">Няма да споделяме вашия имейл</small>
-                    </form>
+                    <h6 class="fw-bold mb-3">Работно време</h6>
+                    <ul class="list-unstyled small text-white opacity-75">
+                        <li class="mb-1"><i class="fas fa-clock text-warning me-2"></i>Пон — Пет: 08:00 – 18:00</li>
+                        <li class="mb-1"><i class="fas fa-clock text-warning me-2"></i>Събота: 09:00 – 14:00</li>
+                        <li class="mb-1"><i class="fas fa-times text-danger me-2"></i>Неделя: Почивен ден</li>
+                    </ul>
+                    <a asp-controller="Appointments" asp-action="Create"
+                       class="btn btn-warning btn-sm mt-2 w-100">
+                        <i class="fas fa-calendar-plus me-1"></i>Запиши час
+                    </a>
                 </div>
             </div>
-            <hr class="bg-white my-4" />
+            <hr class="border-secondary mt-3 mb-3" />
             <div class="row">
-                <div class="col-md-6">
-                    <p class="mb-0">&copy; 2025 CarPainting Studio. Всички права запазени.</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <a asp-controller="Home" asp-action="Index" class="text-white text-decoration-none me-3">Начало</a>
-                    <a asp-controller="Services" asp-action="Index" class="text-white text-decoration-none me-3">Услуги</a>
-                    <a asp-controller="Reviews" asp-action="Index" class="text-white text-decoration-none me-3">Отзиви</a>
-                    <a asp-controller="Gallery" asp-action="Index" class="text-white text-decoration-none me-3">Галерия</a>
-                    <a asp-controller="Home" asp-action="About" class="text-white text-decoration-none">За нас</a>
+                <div class="col-12 text-center">
+                    <small class="text-white opacity-50">
+                        &copy; 2025 CarPainting Studio. Всички права запазени.
+                    </small>
                 </div>
             </div>
         </div>
