@@ -27,84 +27,40 @@
 | Автентикация | ASP.NET Identity |
 | Frontend | Bootstrap 5.3, Font Awesome 6.4, jQuery |
 | Unit Tests | xUnit 2.6 + EF InMemory |
-| IDE | Visual Studio 2022 |
 
 ---
 
 ## 🏗️ Архитектура
 
-Проектът следва класическия **MVC (Model-View-Controller)** шаблон с допълнителен **Services Layer** за бизнес логиката:
+Проектът следва **MVC** шаблон с допълнителен **Services Layer**:
 
 ```
 CarPaintingStudio/
-├── Areas/
-│   └── Admin/                    # Admin Area (MVC Area)
-│       ├── Controllers/
-│       │   ├── DashboardController.cs
-│       │   ├── ServicesController.cs
-│       │   ├── AppointmentsController.cs
-│       │   └── ReviewsController.cs
-│       └── Views/
+├── Areas/Admin/                  # Admin Area
+│   ├── Controllers/              # Dashboard, Services, Appointments, Reviews
+│   └── Views/
 ├── Controllers/                  # Public контролери
-│   ├── HomeController.cs
-│   ├── AccountController.cs
-│   ├── ServicesController.cs
-│   ├── AppointmentsController.cs
-│   ├── ReviewsController.cs
-│   └── GalleryController.cs
-├── Services/                     # Services Layer (бизнес логика)
-│   ├── IServiceService.cs / ServiceService.cs
-│   ├── IAppointmentService.cs / AppointmentService.cs
-│   └── IReviewService.cs / ReviewService.cs
-├── Models/                       # Entity модели
-│   ├── ApplicationUser.cs        # ASP.NET Identity потребител
-│   ├── Service.cs
-│   ├── Appointment.cs
-│   ├── GalleryItem.cs
-│   ├── Employee.cs
-│   └── Review.cs
-├── ViewModels/                   # View Models
-│   ├── ServiceViewModel.cs
-│   ├── ServiceFilterViewModel.cs
-│   ├── CreateAppointmentViewModel.cs
-│   ├── AppointmentFilterViewModel.cs
-│   ├── CreateReviewViewModel.cs
-│   ├── PaginatedList.cs
-│   ├── AppointmentStatsViewModel.cs
-│   └── ReviewStatsViewModel.cs
-├── Data/
-│   ├── ApplicationDbContext.cs   # IdentityDbContext
-│   └── DbSeeder.cs               # Seed на роли и Admin акаунт
+├── Services/                     # Бизнес логика (IServiceService, IAppointmentService, IReviewService)
+├── Models/                       # 6 entity модела
+├── ViewModels/                   # View Models + PaginatedList<T>
+├── Data/                         # ApplicationDbContext + DbSeeder
 ├── Views/                        # Razor изгледи
-├── CarPaintingStudio.Tests/      # Unit тест проект
-│   ├── TestDbContextFactory.cs
-│   └── Services/
-│       ├── ServiceServiceTests.cs
-│       ├── AppointmentServiceTests.cs
-│       └── ReviewServiceTests.cs
-├── Program.cs
-└── appsettings.json
+├── CarPaintingStudio.Tests/      # xUnit тест проект
+└── wwwroot/                      # CSS, JS, статични файлове
 ```
-
-### Слоеве
-
-- **Controllers** — routing, валидация на входящите данни, избор на view
-- **Services** — бизнес логика, изолирана от контролерите
-- **Models** — entity модели, директно свързани с базата данни
-- **ViewModels** — данни, специфично оформени за конкретен изглед
 
 ---
 
-## 🎯 Entity модели (5 модела)
+## 🎯 Entity модели (6 модела)
 
 | Модел | Описание |
 |-------|---------|
-| `ApplicationUser` | Разширен Identity потребител с FullName и RegisteredOn |
-| `Service` | Услуга на сервиза (боядисване, полиране и др.) |
+| `ApplicationUser` | Разширен Identity потребител с FullName |
+| `Service` | Услуга на сервиза |
 | `Appointment` | Записан час от клиент |
-| `GalleryItem` | Снимка преди/след от галерията |
+| `GalleryItem` | Снимка преди/след |
 | `Employee` | Служител на сервиза |
-| `Review` | Отзив от клиент с рейтинг 1-5 |
+| `Review` | Отзив с рейтинг 1-5 |
 
 ---
 
@@ -112,180 +68,92 @@ CarPaintingStudio/
 
 | Роля | Достъп |
 |------|--------|
-| **Гост** | Начало, Услуги (преглед), Галерия, Запиши час, Отзиви (преглед) |
-| **User** | Всичко за гост + Моите записвания, Напиши отзив |
-| **Admin** | Всичко + Admin панел (управление на услуги, записвания, отзиви) |
+| **Гост** | Начало, Услуги, Галерия, Запиши час, Отзиви |
+| **User** | + Моите записвания, Напиши отзив |
+| **Admin** | + Admin панел (пълно управление) |
 
-### Admin акаунт (seed данни)
-```
-Email:    admin@carpaint.bg
-Парола:   Admin123!
-```
+**Admin акаунт:** `admin@carpaint.bg` / `Admin123!`
 
 ---
 
 ## 🔑 Основни функционалности
 
-### Публична секция
-- 🏠 **Начална страница** — услуги, галерия, testimonials, контакти
-- 🛠️ **Услуги** — преглед с pagination (6 на страница), търсене, филтър по цена, сортиране
-- 📅 **Запиши час** — форма за записване (достъпна и за гости)
-- 🖼️ **Галерия** — проекти преди/след
-- ⭐ **Отзиви** — одобрени отзиви с рейтинг и статистика
-- 👥 **За нас** — екип и информация за сервиза
-
-### Потребителска секция (след вход)
-- 📋 **Моите записвания** — pagination, филтър по статус и период, търсене
-- ✍️ **Напиши отзив** — формуляр с интерактивни звезди (1-5)
-
-### Admin Area (`/Admin`)
-- 📊 **Dashboard** — статистика: услуги, записвания, служители, галерия
-- 🛠️ **Управление на услуги** — CRUD + активиране/деактивиране
-- 📅 **Управление на записвания** — промяна на статус, търсене, филтриране
-- ⭐ **Управление на отзиви** — одобрение/отхвърляне/изтриване
-
----
-
-## 🔒 Сигурност
-
-- **ASP.NET Identity** за автентикация и авторизация
-- **[Authorize(Roles = "Admin")]** за Admin Area
-- **AutoValidateAntiForgeryToken** — глобален CSRF филтър
-- **[ValidateAntiForgeryToken]** на всички POST форми
-- **XSS защита** чрез Razor автоматично HTML encoding
-- **Custom 404/500 pages** с `UseStatusCodePagesWithReExecute`
-- Server-side + client-side валидация на всички форми
-
----
-
-## 📄 Валидация
-
-Всички entity модели имат DataAnnotations атрибути:
-
-```csharp
-[Required(ErrorMessage = "Името е задължително")]
-[StringLength(100, MinimumLength = 2)]
-[EmailAddress(ErrorMessage = "Невалиден имейл")]
-[Range(50, 10000, ErrorMessage = "Цената трябва да е между 50 и 10000 лв.")]
-```
-
-Client-side валидацията е активирана чрез `_ValidationScriptsPartial`.
-
----
-
-## 🗄️ База данни и Seed данни
-
-Проектът използва **SQLite** с **Code First** подход.
-
-### Seed данни (автоматично при стартиране)
-
-- **6 услуги** — Пълно боядисване, Частично, Полиране, Матово, Керамично, Vinyl wrap
-- **4 служители** — с биографии и опит
-- **6 галерийни записа** — Mercedes, BMW, Audi, Porsche, VW, Toyota
-- **5 записвания** — с различни статуси
-- **5 отзива** — 4 одобрени + 1 чакащ
-- **Роли** — Admin и User
-- **Admin акаунт** — `admin@carpaint.bg`
+- **Услуги** — pagination, търсене, филтър по цена, сортиране
+- **Записвания** — CRUD, статуси, филтриране, pagination
+- **Отзиви** — интерактивни звезди, одобрение от Admin, pagination
+- **Галерия** — преди/след modal, grid switcher
+- **Admin Dashboard** — статистика с AJAX обновяване
+- **Identity** — Register, Login, роли, AutoValidateAntiForgeryToken
 
 ---
 
 ## 🧪 Unit тестове
 
-Проектът включва **xUnit** тест проект с **43 теста** покриващи Services Layer-а.
-
-### Структура на тестовете
-
-```
-CarPaintingStudio.Tests/
-├── TestDbContextFactory.cs       # InMemory DB factory с изолация
-└── Services/
-    ├── ServiceServiceTests.cs    # 14 теста
-    ├── AppointmentServiceTests.cs # 15 теста
-    └── ReviewServiceTests.cs     # 14 теста
-```
-
-### Стартиране на тестовете
+**43 теста** в `CarPaintingStudio.Tests/` с xUnit + EF InMemory:
 
 ```bash
 dotnet test CarPaintingStudio.Tests/CarPaintingStudio.Tests.csproj
 ```
 
-### Покрити сценарии
-
-**ServiceService (14 теста)**
-- Търсене и филтриране по цена и сортиране
-- GetById — съществуващ и несъществуващ Id
-- Create, Update, Delete, ToggleActive, Exists
-
-**AppointmentService (15 теста)**
-- Admin вижда всички, User вижда само своите
-- Филтриране по статус, период, търсене по клиент
-- Create, ChangeStatus, Delete, GetStats
-
-**ReviewService (14 теста)**
-- Само одобрени отзиви са публично видими
-- Approve, Reject, Delete
-- Статистика: брой, средна оценка, pending
-
 ---
 
-## 🚀 Инсталация и стартиране
-
-### Изисквания
-- .NET 8.0 SDK
-- Visual Studio 2022
-
-### Стъпки
+## 🚀 Инсталация
 
 ```bash
-# 1. Клониране на проекта
 git clone https://github.com/amilovich/CarPaintingStudio.git
 cd CarPaintingStudio
-
-# 2. Възстановяване на пакетите
 dotnet restore
-
-# 3. Прилагане на миграциите
 dotnet ef database update
-
-# 4. Стартиране
 dotnet run
 ```
 
-Приложението ще е достъпно на **https://localhost:5001**
-
-### Admin вход
-```
-Email:  admin@carpaint.bg
-Парола: Admin123!
-```
+Отвори **https://localhost:5001** в браузъра.
 
 ---
 
-## 📊 Контролери (6 публични + 4 Admin)
+## 📊 Git история — 30 комита за 3 дни
 
-| Контролер | Маршрут | Описание |
-|-----------|---------|---------|
-| HomeController | `/` | Начало, За нас, Error pages |
-| AccountController | `/Account` | Register, Login, Logout |
-| ServicesController | `/Services` | Публичен преглед с pagination |
-| AppointmentsController | `/Appointments` | Записвания (логнати) |
-| ReviewsController | `/Reviews` | Отзиви (публично + Create за логнати) |
-| GalleryController | `/Gallery` | Галерия |
-| Admin/DashboardController | `/Admin` | Статистика |
-| Admin/ServicesController | `/Admin/Services` | CRUD услуги |
-| Admin/AppointmentsController | `/Admin/Appointments` | Управление записвания |
-| Admin/ReviewsController | `/Admin/Reviews` | Одобрение отзиви |
+### 🔵 Ден 1 (Комити 1-10)
+| # | Описание |
+|---|---------|
+| 1 | Identity пакети + ApplicationDbContext → IdentityDbContext + ApplicationUser |
+| 2 | AccountController (Register/Login/Logout) + ViewModels + _Layout auth навигация |
+| 3 | DbSeeder + Admin Area структура + DashboardController + _AdminLayout |
+| 4 | Admin/ServicesController CRUD + ToggleActive |
+| 5 | Admin/AppointmentsController CRUD + ChangeStatus бутони |
+| 6 | Review модел (5-ти entity) + миграция + seed на отзиви |
+| 7 | ReviewsController + Views + интерактивни звезди JS |
+| 8 | Custom 404/500 pages + UseStatusCodePagesWithReExecute |
+| 9 | [Authorize] атрибути + AutoValidateAntiForgeryToken глобално |
+| 10 | Разширен seed + Admin/ReviewsController (Approve/Reject/Delete) |
 
----
+### 🟢 Ден 2 (Комити 11-20)
+| # | Описание |
+|---|---------|
+| 11 | PaginatedList<T> + ServiceFilterViewModel + pagination за Services/Index |
+| 12 | AppointmentFilterViewModel + pagination/search/filter за Appointments |
+| 13 | Services Layer — IServiceService, IAppointmentService, IReviewService |
+| 14 | Рефакториране на всички контролери да използват Services Layer |
+| 15 | Unit Tests проект — xUnit + EF InMemory, 43 теста |
+| 16 | Пълна README документация |
+| 17 | Admin Dashboard с AJAX GetStats + Services/Details с отзиви |
+| 18 | ReviewFilterViewModel + pagination/search за Reviews/Index |
+| 19 | Подобрен Appointments/Details с карти и покана за отзив |
+| 20 | Подобрена Gallery страница с hover zoom и modal |
 
-## 📈 Git история
-
-Проектът е разработен с **30 комита** разпределени в **3 дни**, демонстриращи реален development процес:
-
-- **Ден 1** — Identity, Areas, роли, AccountController, Admin Dashboard, CRUD за услуги и записвания, Review модел, error pages, Authorize, seed данни
-- **Ден 2** — Pagination, Search/Filter, Services Layer, рефакториране на контролери, Unit Tests, README
-- **Ден 3** — допълнителни функционалности
+### 🟡 Ден 3 (Комити 21-30)
+| # | Описание |
+|---|---------|
+| 21 | Подобрена About страница с модерен дизайн и технологии |
+| 22 | Подобрена Gallery страница |
+| 23 | Активни nav линкове в _Layout + тъмен navbar |
+| 24 | Подобрени Login/Register форми — show/hide парола, strength indicator |
+| 25 | Подобрен Admin Layout с активни nav линкове и секции |
+| 26 | Подобрени error pages — 403, 404, 500 |
+| 27 | Services Create/Edit + Reviews Details модернизирани |
+| 28 | Appointments Edit/Delete + Services Delete модернизирани |
+| 29 | Почистени site.css и site.js с scroll анимации |
+| 30 | Финален cleanup — appsettings, README |
 
 ---
 
