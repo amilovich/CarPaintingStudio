@@ -1,110 +1,153 @@
-@model CreateAppointmentViewModel
+@model CarPaintingStudio.ViewModels.CreateAppointmentViewModel
 @{
     ViewData["Title"] = "Запиши час";
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h2>
-                        <i class="fas fa-calendar-plus"></i> Запиши час за боядисване
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <p class="lead">Попълнете формата по-долу и нашият екип ще се свърже с Вас за потвърждение.</p>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
+            @* Заглавие *@
+            <div class="text-center mb-4">
+                <i class="fas fa-calendar-plus fa-3x text-primary mb-3 d-block"></i>
+                <h2 class="fw-bold">Запишете час</h2>
+                <p class="text-muted">Попълнете формата и ние ще се свържем с Вас за потвърждение.</p>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
                     <form asp-action="Create" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-                        <h5 class="mb-3"><i class="fas fa-user"></i> Лични данни</h5>
-                        
-                        <div class="mb-3">
-                            <label asp-for="CustomerName" class="form-label"></label>
-                            <input asp-for="CustomerName" class="form-control" placeholder="Иван Иванов" />
-                            <span asp-validation-for="CustomerName" class="text-danger"></span>
+                        @* Лични данни *@
+                        <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom">
+                            <i class="fas fa-user me-2"></i>Лични данни
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label asp-for="CustomerName" class="form-label fw-semibold"></label>
+                                <input asp-for="CustomerName" class="form-control"
+                                       placeholder="Иван Иванов" />
+                                <span asp-validation-for="CustomerName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input asp-for="Phone" class="form-control" placeholder="0888 123 456" />
+                                </div>
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input asp-for="Email" class="form-control" placeholder="ivan@example.com" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Phone" class="form-label"></label>
-                                <input asp-for="Phone" class="form-control" placeholder="0888123456" />
-                                <span asp-validation-for="Phone" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Email" class="form-label"></label>
-                                <input asp-for="Email" class="form-control" placeholder="ivan@example.com" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <h5 class="mb-3 mt-4"><i class="fas fa-car"></i> Данни за автомобила</h5>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label asp-for="CarBrand" class="form-label"></label>
+                        @* Данни за автомобила *@
+                        <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom">
+                            <i class="fas fa-car me-2"></i>Данни за автомобила
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="CarBrand" class="form-label fw-semibold"></label>
                                 <input asp-for="CarBrand" class="form-control" placeholder="BMW" />
-                                <span asp-validation-for="CarBrand" class="text-danger"></span>
+                                <span asp-validation-for="CarBrand" class="text-danger small"></span>
                             </div>
-
-                            <div class="col-md-4 mb-3">
-                                <label asp-for="CarModel" class="form-label"></label>
+                            <div class="col-md-4">
+                                <label asp-for="CarModel" class="form-label fw-semibold"></label>
                                 <input asp-for="CarModel" class="form-control" placeholder="320d" />
-                                <span asp-validation-for="CarModel" class="text-danger"></span>
+                                <span asp-validation-for="CarModel" class="text-danger small"></span>
                             </div>
-
-                            <div class="col-md-4 mb-3">
-                                <label asp-for="CarYear" class="form-label"></label>
+                            <div class="col-md-4">
+                                <label asp-for="CarYear" class="form-label fw-semibold"></label>
                                 <input asp-for="CarYear" class="form-control" placeholder="2020" />
-                                <span asp-validation-for="CarYear" class="text-danger"></span>
+                                <span asp-validation-for="CarYear" class="text-danger small"></span>
                             </div>
                         </div>
 
-                        <h5 class="mb-3 mt-4"><i class="fas fa-tools"></i> Услуга и дата</h5>
-
-                        <div class="mb-3">
-                            <label asp-for="ServiceId" class="form-label"></label>
-                            <select asp-for="ServiceId" class="form-select">
-                                <option value="">-- Изберете услуга --</option>
-                                @if (Model.AvailableServices != null)
-                                {
-                                    @foreach (var service in Model.AvailableServices)
+                        @* Услуга и дата *@
+                        <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom">
+                            <i class="fas fa-tools me-2"></i>Услуга и дата
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label asp-for="ServiceId" class="form-label fw-semibold">Изберете услуга</label>
+                                <select asp-for="ServiceId" class="form-select" id="serviceSelect">
+                                    <option value="">— Изберете услуга —</option>
+                                    @if (Model.AvailableServices != null)
                                     {
-                                        <option value="@service.Id">
-                                            @service.Name - @service.Price лв (@service.DurationDays дни)
-                                        </option>
+                                        @foreach (var service in Model.AvailableServices)
+                                        {
+                                            <option value="@service.Id"
+                                                    data-price="@service.Price"
+                                                    data-days="@service.DurationDays">
+                                                @service.Name — @service.Price.ToString("F0") лв. (@service.DurationDays дни)
+                                            </option>
+                                        }
                                     }
-                                }
-                            </select>
-                            <span asp-validation-for="ServiceId" class="text-danger"></span>
+                                </select>
+                                <span asp-validation-for="ServiceId" class="text-danger small"></span>
+                            </div>
+
+                            @* Preview на избраната услуга *@
+                            <div class="col-12" id="servicePreview" style="display:none">
+                                <div class="alert alert-info d-flex justify-content-between align-items-center mb-0">
+                                    <span><i class="fas fa-info-circle me-2"></i><span id="previewName"></span></span>
+                                    <div>
+                                        <strong class="text-success me-3" id="previewPrice"></strong>
+                                        <span class="text-muted small" id="previewDays"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="AppointmentDate" class="form-label fw-semibold"></label>
+                                <input asp-for="AppointmentDate" class="form-control" type="date"
+                                       min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="AppointmentDate" class="text-danger small"></span>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>Минималната дата е утре
+                                </small>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Notes" class="form-label fw-semibold"></label>
+                                <textarea asp-for="Notes" class="form-control" rows="3"
+                                          placeholder="Специални изисквания, цвят, допълнителна информация..."></textarea>
+                                <span asp-validation-for="Notes" class="text-danger small"></span>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="AppointmentDate" class="form-label"></label>
-                            <input asp-for="AppointmentDate" class="form-control" type="date" />
-                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
-                            <small class="form-text text-muted">
-                                <i class="fas fa-info-circle"></i> Моля изберете дата поне един ден напред
-                            </small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Notes" class="form-label"></label>
-                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Допълнителни забележки или специални изисквания..."></textarea>
-                            <span asp-validation-for="Notes" class="text-danger"></span>
-                        </div>
-
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-check"></i> Изпрати записване
+                        @* Бутони *@
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg flex-fill">
+                                <i class="fas fa-calendar-check me-2"></i>Изпрати записването
                             </button>
-                            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Отказ
+                            <a asp-controller="Home" asp-action="Index"
+                               class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-1"></i>Отказ
                             </a>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            @* Контакти *@
+            <div class="card border-0 bg-light mt-4">
+                <div class="card-body text-center py-3">
+                    <p class="mb-1 text-muted small">Въпроси? Обадете ни се директно:</p>
+                    <a href="tel:0888123456" class="fw-bold text-primary text-decoration-none">
+                        <i class="fas fa-phone me-1"></i>0888 123 456
+                    </a>
+                    <span class="text-muted mx-2">|</span>
+                    <a href="mailto:info@carpaint.bg" class="text-muted text-decoration-none small">
+                        info@carpaint.bg
+                    </a>
                 </div>
             </div>
         </div>
@@ -112,5 +155,33 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        // Preview на избрана услуга
+        const select   = document.getElementById('serviceSelect');
+        const preview  = document.getElementById('servicePreview');
+        const prevName = document.getElementById('previewName');
+        const prevPrice = document.getElementById('previewPrice');
+        const prevDays  = document.getElementById('previewDays');
+
+        select.addEventListener('change', function () {
+            const opt = this.options[this.selectedIndex];
+            if (this.value) {
+                prevName.textContent  = opt.text.split('—')[0].trim();
+                prevPrice.textContent = opt.dataset.price + ' лв.';
+                prevDays.textContent  = opt.dataset.days + ' дни';
+                preview.style.display = '';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        // Задаване на минимална дата
+        const dateInput = document.querySelector('input[type="date"]');
+        if (dateInput && !dateInput.value) {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            dateInput.value = tomorrow.toISOString().split('T')[0];
+        }
+    </script>
 }

@@ -1,133 +1,202 @@
-@model Appointment
+@model CarPaintingStudio.Models.Appointment
+@using CarPaintingStudio.Models
 @{
-    ViewData["Title"] = "Детайли - Записване";
+    ViewData["Title"] = "Детайли - Записване #" + Model.Id;
+
+    var statusLabel = Model.Status switch
+    {
+        AppointmentStatus.Pending    => "Чакащ",
+        AppointmentStatus.Confirmed  => "Потвърден",
+        AppointmentStatus.InProgress => "В процес",
+        AppointmentStatus.Completed  => "Завършен",
+        AppointmentStatus.Cancelled  => "Отказан",
+        _ => "Неизвестен"
+    };
+
+    var statusClass = Model.Status switch
+    {
+        AppointmentStatus.Pending    => "bg-warning text-dark",
+        AppointmentStatus.Confirmed  => "bg-info text-dark",
+        AppointmentStatus.InProgress => "bg-primary",
+        AppointmentStatus.Completed  => "bg-success",
+        AppointmentStatus.Cancelled  => "bg-danger",
+        _ => "bg-secondary"
+    };
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h2>
-                        <i class="fas fa-info-circle"></i> Детайли за записването
-                    </h2>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            @* Заглавна карта *@
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-calendar-check me-2"></i>Записване #@Model.Id
+                        </h4>
+                        <span class="badge @statusClass fs-6 px-3 py-2">@statusLabel</span>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5><i class="fas fa-user"></i> Информация за клиента</h5>
-                            <dl class="row">
-                                <dt class="col-sm-4">Име:</dt>
-                                <dd class="col-sm-8">@Model.CustomerName</dd>
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        Създадено на @Model.CreatedDate.ToString("dd.MM.yyyy") в @Model.CreatedDate.ToString("HH:mm")
+                    </small>
+                </div>
+            </div>
 
-                                <dt class="col-sm-4">Телефон:</dt>
-                                <dd class="col-sm-8">
-                                    <a href="tel:@Model.Phone">@Model.Phone</a>
-                                </dd>
+            <div class="row g-4 mb-4">
 
-                                <dt class="col-sm-4">Имейл:</dt>
-                                <dd class="col-sm-8">
-                                    <a href="mailto:@Model.Email">@Model.Email</a>
-                                </dd>
-                            </dl>
+                @* Клиентска информация *@
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white border-bottom fw-bold">
+                            <i class="fas fa-user text-primary me-2"></i>Клиент
                         </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="text-muted small mb-1">Имe</div>
+                                <div class="fw-semibold fs-5">@Model.CustomerName</div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="text-muted small mb-1">Телефон</div>
+                                <a href="tel:@Model.Phone" class="text-decoration-none fw-semibold">
+                                    <i class="fas fa-phone text-success me-1"></i>@Model.Phone
+                                </a>
+                            </div>
+                            <div>
+                                <div class="text-muted small mb-1">Имейл</div>
+                                <a href="mailto:@Model.Email" class="text-decoration-none fw-semibold">
+                                    <i class="fas fa-envelope text-primary me-1"></i>@Model.Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="col-md-6">
-                            <h5><i class="fas fa-car"></i> Информация за автомобила</h5>
-                            <dl class="row">
-                                <dt class="col-sm-4">Марка:</dt>
-                                <dd class="col-sm-8">@Model.CarBrand</dd>
-
-                                <dt class="col-sm-4">Модел:</dt>
-                                <dd class="col-sm-8">@Model.CarModel</dd>
-
+                @* Автомобил *@
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white border-bottom fw-bold">
+                            <i class="fas fa-car text-primary me-2"></i>Автомобил
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center py-2">
+                                <i class="fas fa-car fa-3x text-muted mb-3 d-block"></i>
+                                <h5 class="fw-bold mb-1">@Model.CarBrand @Model.CarModel</h5>
                                 @if (Model.CarYear.HasValue)
                                 {
-                                    <dt class="col-sm-4">Година:</dt>
-                                    <dd class="col-sm-8">@Model.CarYear</dd>
+                                    <span class="badge bg-secondary">@Model.CarYear г.</span>
                                 }
-                            </dl>
+                            </div>
                         </div>
                     </div>
-
-                    <hr />
-
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <h5><i class="fas fa-tools"></i> Детайли за услугата</h5>
-                            <dl class="row">
-                                <dt class="col-sm-4">Услуга:</dt>
-                                <dd class="col-sm-8">
-                                    @if (Model.Service != null)
-                                    {
-                                        <strong>@Model.Service.Name</strong><br />
-                                        <small class="text-muted">@Model.Service.Description</small><br />
-                                        <span class="badge bg-success">@Model.Service.Price лв</span>
-                                        <span class="badge bg-info">@Model.Service.DurationDays дни</span>
-                                    }
-                                </dd>
-
-                                <dt class="col-sm-4">Дата:</dt>
-                                <dd class="col-sm-8">
-                                    <strong>@Model.AppointmentDate.ToString("dd.MM.yyyy")</strong>
-                                </dd>
-                            </dl>
-                        </div>
-
-                        <div class="col-md-6">
-                            <h5><i class="fas fa-info-circle"></i> Статус и други</h5>
-                            <dl class="row">
-                                <dt class="col-sm-4">Статус:</dt>
-                                <dd class="col-sm-8">
-                                    @switch (Model.Status)
-                                    {
-                                        case AppointmentStatus.Pending:
-                                            <span class="badge bg-warning text-dark fs-6">Чакащ</span>
-                                            break;
-                                        case AppointmentStatus.Confirmed:
-                                            <span class="badge bg-info fs-6">Потвърден</span>
-                                            break;
-                                        case AppointmentStatus.InProgress:
-                                            <span class="badge bg-primary fs-6">В процес</span>
-                                            break;
-                                        case AppointmentStatus.Completed:
-                                            <span class="badge bg-success fs-6">Завършен</span>
-                                            break;
-                                        case AppointmentStatus.Cancelled:
-                                            <span class="badge bg-danger fs-6">Отказан</span>
-                                            break;
-                                    }
-                                </dd>
-
-                                <dt class="col-sm-4">Създаден:</dt>
-                                <dd class="col-sm-8">@Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</dd>
-                            </dl>
-                        </div>
-                    </div>
-
-                    @if (!string.IsNullOrEmpty(Model.Notes))
-                    {
-                        <hr />
-                        <h5><i class="fas fa-sticky-note"></i> Забележки</h5>
-                        <div class="alert alert-info">
-                            @Model.Notes
-                        </div>
-                    }
                 </div>
-                <div class="card-footer">
-                    <div class="d-flex flex-column flex-md-row gap-2">
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning flex-fill">
-                            <i class="fas fa-edit"></i> Редактирай
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger flex-fill">
-                            <i class="fas fa-trash"></i> Изтрий
-                        </a>
-                        <a asp-action="Index" class="btn btn-secondary flex-fill">
-                            <i class="fas fa-arrow-left"></i> Назад към списъка
-                        </a>
+
+                @* Услуга *@
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white border-bottom fw-bold">
+                            <i class="fas fa-tools text-primary me-2"></i>Услуга
+                        </div>
+                        <div class="card-body">
+                            @if (Model.Service != null)
+                            {
+                                <h5 class="fw-bold mb-2">@Model.Service.Name</h5>
+                                <p class="text-muted small mb-3">@Model.Service.Description</p>
+                                <div class="d-flex gap-2">
+                                    <span class="badge bg-success fs-6 px-3">
+                                        <i class="fas fa-tag me-1"></i>@Model.Service.Price.ToString("F0") лв.
+                                    </span>
+                                    <span class="badge bg-info text-dark fs-6 px-3">
+                                        <i class="fas fa-clock me-1"></i>@Model.Service.DurationDays дни
+                                    </span>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Няма информация за услугата.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @* Дата и статус *@
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white border-bottom fw-bold">
+                            <i class="fas fa-calendar text-primary me-2"></i>Дата и статус
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="text-muted small mb-1">Дата на записване</div>
+                                <div class="fw-bold fs-5 text-primary">
+                                    <i class="fas fa-calendar-day me-1"></i>
+                                    @Model.AppointmentDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("bg-BG"))
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-muted small mb-1">Текущ статус</div>
+                                <span class="badge @statusClass px-3 py-2 fs-6">@statusLabel</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            @* Забележки *@
+            @if (!string.IsNullOrWhiteSpace(Model.Notes))
+            {
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white fw-bold">
+                        <i class="fas fa-sticky-note text-warning me-2"></i>Забележки
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">@Model.Notes</p>
+                    </div>
+                </div>
+            }
+
+            @* Линк за отзив след завършено записване *@
+            @if (Model.Status == AppointmentStatus.Completed &&
+                 User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="alert alert-success d-flex align-items-center gap-3 mb-4" role="alert">
+                    <i class="fas fa-star fa-2x text-warning"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">Доволни сте от услугата?</h6>
+                        <p class="mb-2 small">Оставете отзив и помогнете на другите клиенти!</p>
+                        <a asp-controller="Reviews" asp-action="Create"
+                           class="btn btn-sm btn-success">
+                            <i class="fas fa-pen me-1"></i>Напишете отзив
+                        </a>
+                    </div>
+                </div>
+            }
+
+            @* Действия *@
+            <div class="card shadow-sm border-0">
+                <div class="card-body d-flex flex-wrap gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Назад
+                    </a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-area="Admin" asp-controller="Appointments"
+                           asp-action="Edit" asp-route-id="@Model.Id"
+                           class="btn btn-warning">
+                            <i class="fas fa-edit me-1"></i>Редактирай
+                        </a>
+                        <a asp-area="Admin" asp-controller="Appointments"
+                           asp-action="Delete" asp-route-id="@Model.Id"
+                           class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>Изтрий
+                        </a>
+                    }
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
