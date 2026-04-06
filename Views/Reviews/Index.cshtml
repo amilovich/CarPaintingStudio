@@ -1,16 +1,20 @@
-@model IEnumerable<CarPaintingStudio.Models.Review>
+@model CarPaintingStudio.ViewModels.PaginatedList<CarPaintingStudio.Models.Review>
 @{
     ViewData["Title"] = "Отзиви";
-    double avg = ViewBag.AverageRating;
-    int total = ViewBag.TotalReviews;
+    double avg   = ViewBag.AverageRating;
+    int total    = ViewBag.TotalReviews;
+    var filter   = ViewBag.Filter as CarPaintingStudio.ViewModels.ReviewFilterViewModel
+                   ?? new CarPaintingStudio.ViewModels.ReviewFilterViewModel();
 }
 
 <div class="container mt-4">
 
-    @* Заглавие и средна оценка *@
-    <div class="row align-items-center mb-5">
+    @* Заглавие *@
+    <div class="row align-items-center mb-4">
         <div class="col-md-8">
-            <h2 class="fw-bold"><i class="fas fa-star text-warning me-2"></i>Отзиви от клиенти</h2>
+            <h2 class="fw-bold">
+                <i class="fas fa-star text-warning me-2"></i>Отзиви от клиенти
+            </h2>
             <p class="text-muted lead">Вижте какво казват нашите клиенти за работата ни.</p>
         </div>
         <div class="col-md-4 text-md-end">
@@ -34,7 +38,7 @@
     @* Обща статистика *@
     @if (total > 0)
     {
-        <div class="card shadow-sm mb-5">
+        <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-md-3 text-center border-end">
@@ -54,8 +58,8 @@
                                 (5, (int)ViewBag.FiveStars),
                                 (4, (int)ViewBag.FourStars),
                                 (3, (int)ViewBag.ThreeStars),
-                                (2, Model.Count(r => r.Rating == 2)),
-                                (1, Model.Count(r => r.Rating == 1))
+                                (2, Model.Where(r => r.Rating == 2).Count()),
+                                (1, Model.Where(r => r.Rating == 1).Count())
                             };
                         }
                         @foreach (var (stars, count) in bars)
@@ -76,18 +80,54 @@
         </div>
     }
 
-    @* Списък отзиви *@
+    @* Форма за търсене и филтриране *@
+    <div class="card shadow-sm mb-4">
+        <div class="card-body py-2">
+            <form asp-action="Index" method="get" class="row g-2 align-items-end">
+                <div class="col-md-6">
+                    <input type="text" name="Search" value="@filter.Search"
+                           class="form-control" placeholder="Търси по автор или съдържание..." />
+                </div>
+                <div class="col-md-3">
+                    <select name="MinRating" class="form-select">
+                        <option value="">Всички оценки</option>
+                        @for (int i = 5; i >= 1; i--)
+                        {
+                            <option value="@i" selected="@(filter.MinRating == i)">
+                                @i+ звезди
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">
+                        <i class="fas fa-search me-1"></i>Търси
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @* Резултати *@
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <small class="text-muted">
+            Показани <strong>@Model.Count</strong> от <strong>@Model.TotalCount</strong> отзива
+        </small>
+        <small class="text-muted">Страница @Model.PageIndex от @Model.TotalPages</small>
+    </div>
+
+    @* Карти с отзиви *@
     @if (!Model.Any())
     {
         <div class="text-center py-5">
             <i class="fas fa-comment-slash fa-4x text-muted mb-3 d-block"></i>
-            <h5 class="text-muted">Все още няма одобрени отзиви.</h5>
-            @if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                <a asp-action="Create" class="btn btn-primary mt-3">
-                    <i class="fas fa-pen me-2"></i>Бъди първият!
-                </a>
-            }
+            <h5 class="text-muted">Няма намерени отзиви.</h5>
+            <a asp-action="Index" class="btn btn-outline-primary mt-2">
+                <i class="fas fa-times me-1"></i>Изчисти филтрите
+            </a>
         </div>
     }
     else
@@ -123,7 +163,8 @@
                                 <div class="text-end">
                                     <small class="text-muted">@review.CreatedDate.ToString("dd.MM.yyyy")</small>
                                     <br />
-                                    <a asp-action="Details" asp-route-id="@review.Id" class="small text-primary">Прочети повече</a>
+                                    <a asp-action="Details" asp-route-id="@review.Id"
+                                       class="small text-primary">Прочети повече</a>
                                 </div>
                             </div>
                         </div>
@@ -131,5 +172,39 @@
                 </div>
             }
         </div>
+
+        @* Pagination *@
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mt-5 d-flex justify-content-center" aria-label="Pagination">
+                <ul class="pagination">
+                    <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(Model.PageIndex - 1)"
+                           asp-route-search="@filter.Search"
+                           asp-route-minRating="@filter.MinRating">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                            <a class="page-link" asp-action="Index"
+                               asp-route-page="@i"
+                               asp-route-search="@filter.Search"
+                               asp-route-minRating="@filter.MinRating">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(Model.PageIndex + 1)"
+                           asp-route-search="@filter.Search"
+                           asp-route-minRating="@filter.MinRating">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
     }
 </div>

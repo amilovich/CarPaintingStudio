@@ -8,17 +8,43 @@ namespace CarPaintingStudio.Services
     public class ReviewService : IReviewService
     {
         private readonly ApplicationDbContext _context;
+        private const int DefaultPageSize = 6;
 
         public ReviewService(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<Review>> GetApprovedReviewsAsync()
+        public async Task<PaginatedList<Review>> GetApprovedReviewsAsync(ReviewFilterViewModel filter)
+        {
+            var query = _context.Reviews
+                .Include(r => r.Service)
+                .Where(r => r.IsApproved)
+                .AsQueryable();
+
+            // Търсене по автор или съдържание
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                var s = filter.Search.ToLower();
+                query = query.Where(r =>
+                    r.AuthorName.ToLower().Contains(s) ||
+                    r.Content.ToLower().Contains(s));
+            }
+
+            // Филтър по минимален рейтинг
+            if (filter.MinRating.HasValue)
+                query = query.Where(r => r.Rating >= filter.MinRating.Value);
+
+            query = query.OrderByDescending(r => r.CreatedDate);
+
+            return await PaginatedList<Review>.CreateAsync(
+                query, filter.Page < 1 ? 1 : filter.Page, DefaultPageSize);
+        }
+
+        public async Task<IEnumerable<Review>> GetAllReviewsAsync()
         {
             return await _context.Reviews
                 .Include(r => r.Service)
-                .Where(r => r.IsApproved)
                 .OrderByDescending(r => r.CreatedDate)
                 .ToListAsync();
         }

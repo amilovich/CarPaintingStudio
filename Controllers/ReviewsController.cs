@@ -23,10 +23,10 @@ namespace CarPaintingStudio.Controllers
             _userManager    = userManager;
         }
 
-        // GET: Reviews — публично
-        public async Task<IActionResult> Index()
+        // GET: Reviews — публично с pagination и search/filter
+        public async Task<IActionResult> Index(ReviewFilterViewModel filter)
         {
-            var reviews = await _reviewService.GetApprovedReviewsAsync();
+            var reviews = await _reviewService.GetApprovedReviewsAsync(filter);
             var stats   = await _reviewService.GetStatsAsync();
 
             ViewBag.AverageRating = stats.AverageRating;
@@ -34,6 +34,7 @@ namespace CarPaintingStudio.Controllers
             ViewBag.FiveStars     = stats.FiveStars;
             ViewBag.FourStars     = stats.FourStars;
             ViewBag.ThreeStars    = stats.ThreeStars;
+            ViewBag.Filter        = filter;
 
             return View(reviews);
         }

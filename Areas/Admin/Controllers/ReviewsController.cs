@@ -18,15 +18,13 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         // GET: Admin/Reviews
         public async Task<IActionResult> Index()
         {
-            var stats = await _reviewService.GetStatsAsync();
+            var reviews = await _reviewService.GetAllReviewsAsync();
+            var stats   = await _reviewService.GetStatsAsync();
+
             ViewBag.PendingCount  = stats.PendingCount;
             ViewBag.ApprovedCount = stats.TotalApproved;
 
-            // За таблицата вземаме всички (одобрени + неодобрени)
-            var approved   = await _reviewService.GetApprovedReviewsAsync();
-            // Комбинираме — използваме отделен метод ако искаме всички
-            // За сега показваме само одобрените + pending се вижда от stats
-            return View(approved);
+            return View(reviews);
         }
 
         // POST: Admin/Reviews/Approve/5
@@ -34,8 +32,8 @@ namespace CarPaintingStudio.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
         {
-            var review  = await _reviewService.GetByIdAsync(id);
-            var result  = await _reviewService.ApproveAsync(id);
+            var review = await _reviewService.GetByIdAsync(id);
+            var result = await _reviewService.ApproveAsync(id);
             if (!result) return NotFound();
 
             TempData["SuccessMessage"] = $"Отзивът на {review?.AuthorName} е одобрен и публикуван.";

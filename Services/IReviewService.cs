@@ -5,7 +5,8 @@ namespace CarPaintingStudio.Services
 {
     public interface IReviewService
     {
-        Task<IEnumerable<Review>> GetApprovedReviewsAsync();
+        Task<PaginatedList<Review>> GetApprovedReviewsAsync(ReviewFilterViewModel filter);
+        Task<IEnumerable<Review>> GetAllReviewsAsync();
         Task<Review?> GetByIdAsync(int id);
         Task<Review> CreateAsync(CreateReviewViewModel model, string? userId);
         Task<bool> ApproveAsync(int id);
