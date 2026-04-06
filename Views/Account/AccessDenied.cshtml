@@ -2,21 +2,67 @@
     ViewData["Title"] = "Достъпът е отказан";
 }
 
-<div class="container mt-5 text-center">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-danger shadow">
-                <div class="card-body p-5">
-                    <i class="fas fa-ban fa-4x text-danger mb-4"></i>
-                    <h2 class="text-danger">Достъпът е отказан</h2>
-                    <p class="text-muted mt-3">
-                        Нямаш необходимите права за достъп до тази страница.
-                    </p>
-                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
-                        <i class="fas fa-home me-2"></i>Към началото
-                    </a>
-                </div>
+        <div class="col-md-7 text-center">
+
+            <div style="font-size: 7rem; font-weight: 900; line-height: 1;
+                        background: linear-gradient(135deg, #e74c3c, #c0392b);
+                        -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                403
             </div>
+
+            <i class="fas fa-shield-alt fa-4x text-danger mb-4 d-block"></i>
+
+            <h2 class="fw-bold mb-3">Достъпът е отказан</h2>
+            <p class="text-muted lead mb-4">
+                Нямате необходимите права за достъп до тази страница.<br />
+                Ако смятате, че това е грешка, свържете се с администратор.
+            </p>
+
+            <div class="card border-0 bg-light p-4 mb-4 d-inline-block text-start">
+                <p class="fw-semibold mb-2 text-center">Какво можете да направите:</p>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="fas fa-sign-in-alt text-primary me-2"></i>
+                        <a asp-controller="Account" asp-action="Login" class="text-decoration-none">
+                            Влезте с акаунт с необходимите права
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-home text-primary me-2"></i>
+                        <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                            Върнете се на началната страница
+                        </a>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope text-primary me-2"></i>
+                        <a href="mailto:info@carpaint.bg" class="text-decoration-none">
+                            Свържете се с администратор
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg px-4">
+                    <i class="fas fa-home me-2"></i>Начало
+                </a>
+                @if (!User.Identity!.IsAuthenticated)
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary btn-lg px-4">
+                        <i class="fas fa-sign-in-alt me-2"></i>Вход
+                    </a>
+                }
+                <button onclick="window.history.back()" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="fas fa-arrow-left me-2"></i>Назад
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
+
+<style>
+    body { background-color: #f8f9fa; }
+</style>

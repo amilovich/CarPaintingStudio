@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8 text-center">
 
-            @* Голямо 500 *@
+            @* 500 число *@
             <div style="font-size: 8rem; font-weight: 900; line-height: 1;
                         background: linear-gradient(135deg, #e67e22, #d35400);
                         -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
@@ -16,12 +16,14 @@
             <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4 d-block"></i>
 
             <h2 class="fw-bold mb-3">Нещо се обърка от наша страна</h2>
-            <p class="text-muted lead mb-4">
-                Сървърът срещна неочакван проблем при обработката на заявката ви.<br />
-                Нашият екип е уведомен и работим по отстраняването.
+            <p class="text-muted lead mb-2">
+                Сървърът срещна неочакван проблем при обработката на заявката ви.
+            </p>
+            <p class="text-muted mb-4">
+                Нашият екип е уведомен и работим по отстраняването на проблема.
             </p>
 
-            @* Request ID за дебъгване *@
+            @* Request ID *@
             @if (ViewBag.ShowRequestId == true)
             {
                 <div class="alert alert-light border d-inline-block mb-4">
@@ -33,27 +35,55 @@
                 </div>
             }
 
-            @* Стъпки за действие *@
-            <div class="card border-0 bg-light p-4 mb-4 text-start d-inline-block">
-                <p class="fw-semibold mb-2 text-center">Какво можете да направите:</p>
-                <ul class="list-unstyled mb-0">
-                    <li class="mb-2">
-                        <i class="fas fa-redo text-warning me-2"></i>
-                        Опреснете страницата след малко
-                    </li>
-                    <li class="mb-2">
-                        <i class="fas fa-home text-warning me-2"></i>
-                        Върнете се на <a asp-controller="Home" asp-action="Index" class="text-decoration-none">началната страница</a>
-                    </li>
-                    <li>
-                        <i class="fas fa-envelope text-warning me-2"></i>
-                        Свържете се с нас на
-                        <a href="mailto:info@carpaint.bg" class="text-decoration-none">info@carpaint.bg</a>
-                    </li>
-                </ul>
+            @* Действия *@
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Какво можете да направите:</h5>
+                    <div class="row g-3 text-start">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-2 flex-shrink-0">
+                                    <i class="fas fa-redo text-warning"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small">Опреснете страницата</div>
+                                    <div class="text-muted small">Проблемът може да е временен</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 flex-shrink-0">
+                                    <i class="fas fa-home text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small">Върнете се назад</div>
+                                    <div class="text-muted small">
+                                        <a asp-controller="Home" asp-action="Index"
+                                           class="text-decoration-none">Начална страница</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-2 flex-shrink-0">
+                                    <i class="fas fa-envelope text-success"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small">Свържете се с нас</div>
+                                    <div class="text-muted small">
+                                        <a href="mailto:info@carpaint.bg"
+                                           class="text-decoration-none">info@carpaint.bg</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="d-flex gap-3 justify-content-center">
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
                 <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg px-4">
                     <i class="fas fa-home me-2"></i>Начало
                 </a>
@@ -76,6 +106,6 @@
     }
     @@keyframes pulse {
         0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
+        50%       { opacity: 0.4; }
     }
 </style>
