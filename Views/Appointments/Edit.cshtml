@@ -1,133 +1,134 @@
 @model CarPaintingStudio.Models.Appointment
-
+@using CarPaintingStudio.Models
 @{
     ViewData["Title"] = "Редактиране на записване";
 }
 
-<div class="container">
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-warning text-dark">
-                    <h3><i class="fas fa-edit"></i> Редактиране на записване</h3>
+        <div class="col-lg-8">
+
+            <div class="text-center mb-4">
+                <i class="fas fa-edit fa-3x text-warning mb-3 d-block"></i>
+                <h3 class="fw-bold">Редактиране на записване</h3>
+                <p class="text-muted">Актуализирайте данните на записването</p>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-warning bg-opacity-10 border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Записване #@Model.Id на <strong>@Model.CustomerName</strong>
+                    </small>
                 </div>
-                <div class="card-body">
-                    <form asp-action="Edit" method="post">
+                <div class="card-body p-4">
+                    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="CreatedDate" />
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="UserId" />
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="CustomerName" class="form-label">
-                                    <i class="fas fa-user"></i> @Html.DisplayNameFor(model => model.CustomerName)
-                                </label>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger small"></div>
+
+                        @* Лични данни *@
+                        <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom">
+                            <i class="fas fa-user me-2"></i>Данни за клиента
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="CustomerName" class="form-label fw-semibold"></label>
                                 <input asp-for="CustomerName" class="form-control" />
-                                <span asp-validation-for="CustomerName" class="text-danger"></span>
+                                <span asp-validation-for="CustomerName" class="text-danger small"></span>
                             </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Phone" class="form-label">
-                                    <i class="fas fa-phone"></i> @Html.DisplayNameFor(model => model.Phone)
-                                </label>
-                                <input asp-for="Phone" class="form-control" />
-                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input asp-for="Phone" class="form-control" />
+                                </div>
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label">
-                                <i class="fas fa-envelope"></i> @Html.DisplayNameFor(model => model.Email)
-                            </label>
-                            <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="CarBrand" class="form-label">
-                                    <i class="fas fa-car"></i> @Html.DisplayNameFor(model => model.CarBrand)
-                                </label>
-                                <input asp-for="CarBrand" class="form-control" />
-                                <span asp-validation-for="CarBrand" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="CarModel" class="form-label">
-                                    <i class="fas fa-car-side"></i> @Html.DisplayNameFor(model => model.CarModel)
-                                </label>
-                                <input asp-for="CarModel" class="form-control" />
-                                <span asp-validation-for="CarModel" class="text-danger"></span>
+                            <div class="col-12">
+                                <label asp-for="Email" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input asp-for="Email" class="form-control" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="CarYear" class="form-label">
-                                    <i class="fas fa-calendar"></i> @Html.DisplayNameFor(model => model.CarYear)
-                                </label>
-                                <input asp-for="CarYear" class="form-control" type="number" />
-                                <span asp-validation-for="CarYear" class="text-danger"></span>
+                        @* Автомобил *@
+                        <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom">
+                            <i class="fas fa-car me-2"></i>Данни за автомобила
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="CarBrand" class="form-label fw-semibold"></label>
+                                <input asp-for="CarBrand" class="form-control" placeholder="BMW" />
+                                <span asp-validation-for="CarBrand" class="text-danger small"></span>
                             </div>
+                            <div class="col-md-4">
+                                <label asp-for="CarModel" class="form-label fw-semibold"></label>
+                                <input asp-for="CarModel" class="form-control" placeholder="320d" />
+                                <span asp-validation-for="CarModel" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="CarYear" class="form-label fw-semibold"></label>
+                                <input asp-for="CarYear" class="form-control" type="number"
+                                       min="1990" max="2030" />
+                                <span asp-validation-for="CarYear" class="text-danger small"></span>
+                            </div>
+                        </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="AppointmentDate" class="form-label">
-                                    <i class="fas fa-calendar-check"></i> @Html.DisplayNameFor(model => model.AppointmentDate)
-                                </label>
+                        @* Услуга, дата и статус *@
+                        <h6 class="fw-bold text-primary mb-3 pb-2 border-bottom">
+                            <i class="fas fa-tools me-2"></i>Услуга и статус
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="ServiceId" class="form-label fw-semibold">Услуга</label>
+                                <select asp-for="ServiceId" class="form-select"
+                                        asp-items="ViewBag.ServiceId">
+                                    <option value="">— Изберете услуга —</option>
+                                </select>
+                                <span asp-validation-for="ServiceId" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="AppointmentDate" class="form-label fw-semibold"></label>
                                 <input asp-for="AppointmentDate" class="form-control" type="date" />
-                                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                                <span asp-validation-for="AppointmentDate" class="text-danger small"></span>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="ServiceId" class="form-label">
-                                    <i class="fas fa-tools"></i> @Html.DisplayNameFor(model => model.Service)
-                                </label>
-                                <select asp-for="ServiceId" class="form-select" asp-items="ViewBag.ServiceId">
-                                    <option value="">-- Изберете услуга --</option>
+                            <div class="col-md-6">
+                                <label asp-for="Status" class="form-label fw-semibold">Статус</label>
+                                <select asp-for="Status" class="form-select"
+                                        asp-items="ViewBag.Statuses">
                                 </select>
-                                <span asp-validation-for="ServiceId" class="text-danger"></span>
+                                <span asp-validation-for="Status" class="text-danger small"></span>
                             </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Status" class="form-label">
-                                    <i class="fas fa-info-circle"></i> @Html.DisplayNameFor(model => model.Status)
-                                </label>
-                                <select asp-for="Status" class="form-select">
-                                    <option value="0">Чакащ</option>
-                                    <option value="1">Потвърден</option>
-                                    <option value="2">В процес</option>
-                                    <option value="3">Завършен</option>
-                                    <option value="4">Отказан</option>
-                                </select>
-                                <span asp-validation-for="Status" class="text-danger"></span>
+                            <div class="col-12">
+                                <label asp-for="Notes" class="form-label fw-semibold">Забележки</label>
+                                <textarea asp-for="Notes" class="form-control" rows="3"
+                                          placeholder="Специални изисквания..."></textarea>
+                                <span asp-validation-for="Notes" class="text-danger small"></span>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Notes" class="form-label">
-                                <i class="fas fa-sticky-note"></i> @Html.DisplayNameFor(model => model.Notes)
-                            </label>
-                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
-                            <span asp-validation-for="Notes" class="text-danger"></span>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Назад
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Запази промените
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg flex-fill">
+                                <i class="fas fa-save me-2"></i>Запази промените
                             </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-1"></i>Отказ
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

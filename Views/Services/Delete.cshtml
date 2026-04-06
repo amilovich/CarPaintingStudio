@@ -1,81 +1,89 @@
 @model CarPaintingStudio.Models.Service
-
 @{
     ViewData["Title"] = "Изтриване на услуга";
 }
 
-<div class="container">
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-danger text-white">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Изтриване на услуга</h3>
+        <div class="col-lg-7">
+
+            <div class="text-center mb-4">
+                <i class="fas fa-trash-alt fa-3x text-danger mb-3 d-block"></i>
+                <h3 class="fw-bold text-danger">Изтриване на услуга</h3>
+                <p class="text-muted">Тази операция е необратима и не може да бъде отменена</p>
+            </div>
+
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger bg-opacity-10 border-danger">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-exclamation-triangle text-danger"></i>
+                        <strong class="text-danger">Сигурни ли сте?</strong>
+                        <span class="text-muted small ms-1">Изтривате услуга: <strong>@Model.Name</strong></span>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="alert alert-warning" role="alert">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <strong>Внимание!</strong> Сигурни ли сте, че искате да изтриете тази услуга?
+                <div class="card-body p-4">
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <div class="text-muted small mb-1">Наименование</div>
+                                <div class="fw-semibold">@Model.Name</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <div class="text-muted small mb-1">Цена</div>
+                                <div class="fw-semibold text-success">@Model.Price.ToString("F0") лв.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <div class="text-muted small mb-1">Продължителност</div>
+                                <div class="fw-semibold">@Model.DurationDays дни</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light rounded p-3">
+                                <div class="text-muted small mb-1">Статус</div>
+                                <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+                                    @(Model.IsActive ? "Активна" : "Неактивна")
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="bg-light rounded p-3">
+                                <div class="text-muted small mb-1">Описание</div>
+                                <div class="small">@Model.Description</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <dl class="row">
-                        <dt class="col-sm-3">
-                            <i class="fas fa-tag"></i> @Html.DisplayNameFor(model => model.Name)
-                        </dt>
-                        <dd class="col-sm-9">
-                            @Html.DisplayFor(model => model.Name)
-                        </dd>
-
-                        <dt class="col-sm-3">
-                            <i class="fas fa-align-left"></i> @Html.DisplayNameFor(model => model.Description)
-                        </dt>
-                        <dd class="col-sm-9">
-                            @Html.DisplayFor(model => model.Description)
-                        </dd>
-
-                        <dt class="col-sm-3">
-                            <i class="fas fa-money-bill-wave"></i> @Html.DisplayNameFor(model => model.Price)
-                        </dt>
-                        <dd class="col-sm-9">
-                            @Html.DisplayFor(model => model.Price) лв
-                        </dd>
-
-                        <dt class="col-sm-3">
-                            <i class="fas fa-clock"></i> @Html.DisplayNameFor(model => model.DurationDays)
-                        </dt>
-                        <dd class="col-sm-9">
-                            @Html.DisplayFor(model => model.DurationDays) дни
-                        </dd>
-
-                        <dt class="col-sm-3">
-                            <i class="fas fa-check-circle"></i> @Html.DisplayNameFor(model => model.IsActive)
-                        </dt>
-                        <dd class="col-sm-9">
-                            <span class="badge bg-@(Model.IsActive ? "success" : "secondary")">
-                                @(Model.IsActive ? "Активна" : "Неактивна")
-                            </span>
-                        </dd>
-
-                        <dt class="col-sm-3">
-                            <i class="fas fa-calendar"></i> @Html.DisplayNameFor(model => model.CreatedDate)
-                        </dt>
-                        <dd class="col-sm-9">
-                            @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")
-                        </dd>
-                    </dl>
+                    @if (Model.Appointments != null && Model.Appointments.Any())
+                    {
+                        <div class="alert alert-warning d-flex align-items-center gap-2 mb-4">
+                            <i class="fas fa-exclamation-circle fa-lg"></i>
+                            <div>
+                                <strong>Не може да изтриете тази услуга!</strong>
+                                <div class="small">Към нея са свързани <strong>@Model.Appointments.Count()</strong> записвания.</div>
+                            </div>
+                        </div>
+                    }
 
                     <form asp-action="Delete" method="post">
                         <input type="hidden" asp-for="Id" />
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Назад към списъка
-                            </a>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash"></i> Изтрий
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg flex-fill"
+                                    @(Model.Appointments != null && Model.Appointments.Any() ? "disabled" : "")>
+                                <i class="fas fa-trash me-2"></i>Да, изтрий
                             </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg flex-fill">
+                                <i class="fas fa-times me-2"></i>Отказ
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
